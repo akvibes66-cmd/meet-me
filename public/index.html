@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meetme by PELQ — Global Skills Marketplace</title>
   
-  <!-- Fonts: Fraunces & DM Sans -->
+  <!-- SEO Optimization -->
+  <title>Meetme by PELQ — Global Skills Marketplace</title>
+  <meta name="description" content="Connect directly with skilled students on campus with zero platform fees." />
+
+  <!-- Performance Optimization: Preconnect to Supabase & Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://exeqybodcbletjcdhjfw.supabase.co" crossorigin />
+  <link rel="dns-prefetch" href="https://exeqybodcbletjcdhjfw.supabase.co" />
+  
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
 
   <!-- Supabase JS Client -->
@@ -490,14 +496,42 @@
     const SUPABASE_URL = 'https://exeqybodcbletjcdhjfw.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg';
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Initialize Supabase Client with explicit auto-refresh settings
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
+      }
+    });
 
     let currentFilter = 'All';
     let searchQuery = '';
     let currentUser = null;
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      currentUser = session ? session.user : null;
+    // Purge expired tokens from localStorage and state
+    async function purgeStaleSession() {
+      try {
+        await supabaseClient.auth.signOut();
+      } catch (e) {}
+      localStorage.clear();
+      currentUser = null;
+      updateAuthUI();
+    }
+
+    // Intercept JWT errors and clear state automatically
+    function isJwtError(err) {
+      if (!err) return false;
+      const msg = (err.message || '').toLowerCase();
+      return msg.includes('jwt expired') || msg.includes('exp') || msg.includes('unauthorized') || err.status === 401;
+    }
+
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        currentUser = null;
+      } else {
+        currentUser = session.user;
+      }
       updateAuthUI();
       renderGrid();
     });
@@ -508,7 +542,10 @@
 
       if (currentUser) {
         authBtn.innerText = 'Sign Out';
-        authBtn.onclick = () => supabaseClient.auth.signOut();
+        authBtn.onclick = async () => {
+          await purgeStaleSession();
+          renderGrid();
+        };
       } else {
         authBtn.innerText = 'Sign In';
         authBtn.onclick = openAuthModal;
@@ -567,9 +604,13 @@
       const { data, error } = await query;
       if (error) {
         console.error('Error loading skills:', error.message);
+        if (isJwtError(error)) {
+          await purgeStaleSession();
+          return fetchSkills(); // Retry cleanly as anonymous guest
+        }
         return [];
       }
-      return data;
+      return data || [];
     }
 
     async function renderGrid() {
@@ -611,7 +652,7 @@
             <span class="price-tag">${escapeHTML(skill.price)}</span>
             <div>
               ${isOwner ? `<button class="btn-secondary" style="margin-right:8px; color:var(--color-error); border-color:var(--color-error);" onclick="deleteListing('${skill.id}')">Delete</button>` : ''}
-              <button class="btn-primary" onclick="openContactModal('${skill.id}', '${escapeHTML(skill.name)}')">Message ${escapeHTML(skill.name.split(' ')[0])}</button>
+              <button class="btn-primary" onclick="openContactModal('${skill.id}', '${escapeHTML(skill.name)}')">Message ${escapeHTML((skill.name || '').split(' ')[0])}</button>
             </div>
           </div>
         `;
@@ -624,6 +665,12 @@
 
       const { error } = await supabaseClient.from('skills').delete().eq('id', skillId);
       if (error) {
+        if (isJwtError(error)) {
+          alert('Session expired. Please sign in again.');
+          await purgeStaleSession();
+          openAuthModal();
+          return;
+        }
         alert('Failed to delete listing: ' + error.message);
       } else {
         renderGrid();
@@ -641,7 +688,11 @@
 
     async function handleSkillSubmit(e) {
       e.preventDefault();
-      if (!currentUser) return alert('Session expired. Please sign in again.');
+      if (!currentUser) {
+        alert('Session expired. Please sign in again.');
+        openAuthModal();
+        return;
+      }
 
       const fields = {
         name: { id: 'fullName', group: 'group-name', validate: val => val.trim().length > 0 },
@@ -700,6 +751,13 @@
         if (uploadError) {
           submitBtn.disabled = false;
           submitBtn.innerText = "Publish Skill Listing";
+          if (isJwtError(uploadError)) {
+            alert("Your session has expired. Please sign in again.");
+            await purgeStaleSession();
+            closePostModal();
+            openAuthModal();
+            return;
+          }
           alert("Failed to upload image: " + uploadError.message);
           return;
         }
@@ -729,6 +787,13 @@
       submitBtn.innerText = "Publish Skill Listing";
 
       if (error) {
+        if (isJwtError(error)) {
+          alert("Your session has expired. Please sign in again.");
+          await purgeStaleSession();
+          closePostModal();
+          openAuthModal();
+          return;
+        }
         alert("Failed to submit listing: " + error.message);
         return;
       }
@@ -763,6 +828,9 @@
       const { data, error } = await supabaseClient.rpc('get_skill_phone', { skill_id: skillId });
 
       if (error || !data || data.length === 0) {
+        if (isJwtError(error)) {
+          await purgeStaleSession();
+        }
         whatsappLink.innerText = "Error fetching contact details";
         return;
       }
@@ -784,19 +852,4 @@
     renderGrid();
   </script>
 </body>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- SEO Optimization -->
-    <title>Campus Skill Marketplace | Connect & Hire Local Talent</title>
-    <meta name="description" content="Connect directly with skilled students on campus with zero platform fees." />
-
-    <!-- Performance Optimization: Preconnect to Supabase asset & API endpoints -->
-    <link rel="preconnect" href="https://exeqybodcbletjcdhjfw.supabase.co" crossorigin />
-    <link rel="dns-prefetch" href="https://exeqybodcbletjcdhjfw.supabase.co" />
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
 </html>
