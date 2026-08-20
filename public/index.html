@@ -490,13 +490,13 @@
     const SUPABASE_URL = 'https://exeqybodcbletjcdhjfw.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg';
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentFilter = 'All';
     let searchQuery = '';
     let currentUser = null;
 
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
       currentUser = session ? session.user : null;
       updateAuthUI();
       renderGrid();
@@ -508,7 +508,7 @@
 
       if (currentUser) {
         authBtn.innerText = 'Sign Out';
-        authBtn.onclick = () => supabase.auth.signOut();
+        authBtn.onclick = () => supabaseClient.auth.signOut();
       } else {
         authBtn.innerText = 'Sign In';
         authBtn.onclick = openAuthModal;
@@ -532,7 +532,7 @@
       btn.disabled = true;
       btn.innerText = 'Sending link...';
 
-      const { error } = await supabase.auth.signInWithOtp({ email });
+      const { error } = await supabaseClient.auth.signInWithOtp({ email });
 
       btn.disabled = false;
       btn.innerText = 'Send Magic Link';
@@ -551,7 +551,7 @@
     }
 
     async function fetchSkills() {
-      let query = supabase
+      let query = supabaseClient
         .from('skills')
         .select('id, name, meta, category, title, description, price, user_id, created_at, image_url')
         .order('created_at', { ascending: false });
@@ -622,7 +622,7 @@
     async function deleteListing(skillId) {
       if (!confirm('Are you sure you want to delete this listing?')) return;
 
-      const { error } = await supabase.from('skills').delete().eq('id', skillId);
+      const { error } = await supabaseClient.from('skills').delete().eq('id', skillId);
       if (error) {
         alert('Failed to delete listing: ' + error.message);
       } else {
@@ -693,7 +693,7 @@
         const fileExt = imageFile.name.split('.').pop();
         const filePath = `${currentUser.id}/${Date.now()}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabaseClient.storage
           .from('skill-images')
           .upload(filePath, imageFile);
 
@@ -704,14 +704,14 @@
           return;
         }
 
-        const { data: urlData } = supabase.storage
+        const { data: urlData } = supabaseClient.storage
           .from('skill-images')
           .getPublicUrl(filePath);
 
         publicImageUrl = urlData.publicUrl;
       }
 
-      const { error } = await supabase.from('skills').insert([
+      const { error } = await supabaseClient.from('skills').insert([
         {
           name: formData.name,
           meta: formData.meta,
@@ -760,7 +760,7 @@
       
       document.getElementById('contactModal').classList.add('active');
 
-      const { data, error } = await supabase.rpc('get_skill_phone', { skill_id: skillId });
+      const { data, error } = await supabaseClient.rpc('get_skill_phone', { skill_id: skillId });
 
       if (error || !data || data.length === 0) {
         whatsappLink.innerText = "Error fetching contact details";
