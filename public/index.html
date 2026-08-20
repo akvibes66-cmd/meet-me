@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meetme by PELQ — Global Skills Marketplace</title>
   
-  <!-- Fonts: Fraunces & DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
 
-  <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -355,7 +353,6 @@
       <h1 class="hero-title">Trade skills directly with creators worldwide.</h1>
       <p class="hero-subtitle">Need a quick photo edit, code review, or design work? Connect directly with skilled creators everywhere via Meetme by PELQ.</p>
       
-      <!-- Live Search Bar -->
       <div class="search-container">
         <input 
           type="text" 
@@ -367,7 +364,6 @@
       </div>
     </section>
 
-    <!-- Category Filters -->
     <div class="filters">
       <button class="filter-btn active" onclick="filterCategory('All', this)">All Skills</button>
       <button class="filter-btn" onclick="filterCategory('Photo & Video', this)">📸 Photo & Video</button>
@@ -376,11 +372,9 @@
       <button class="filter-btn" onclick="filterCategory('Design & Branding', this)">🎨 Design & Branding</button>
     </div>
 
-    <!-- Skill Grid -->
     <div class="card-grid" id="cardGrid"></div>
   </main>
 
-  <!-- Post a Skill Modal -->
   <div class="modal-overlay" id="postModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -438,7 +432,6 @@
           </div>
         </div>
 
-        <!-- Adjustment 1: Image Upload Input Field -->
         <div class="form-group" id="group-image">
           <label for="skillImage">Listing Image (Optional)</label>
           <input type="file" id="skillImage" accept="image/png, image/jpeg, image/webp">
@@ -450,7 +443,6 @@
     </div>
   </div>
 
-  <!-- Auth Modal -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -469,7 +461,6 @@
     </div>
   </div>
 
-  <!-- Peer Contact Modal -->
   <div class="modal-overlay" id="contactModal">
     <div class="modal-card" style="text-align: center;">
       <h3 id="modalName" style="margin-bottom: 8px;">Connect</h3>
@@ -488,8 +479,8 @@
   </footer>
 
   <script>
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const SUPABASE_URL = 'https://exeqybodcbletjcdhjfw.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg';
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -573,7 +564,6 @@
       return data;
     }
 
-    <!-- Adjustment 2: Update Grid Renderer to show preview image -->
     async function renderGrid() {
       const grid = document.getElementById('cardGrid');
       grid.innerHTML = `<div class="empty-state">Loading live listings...</div>`;
@@ -641,7 +631,6 @@
       document.getElementById('postModal').classList.add('active');
     }
 
-    <!-- Adjustment 3: Process Image Uploads inside handleSkillSubmit -->
     async function handleSkillSubmit(e) {
       e.preventDefault();
       if (!currentUser) return alert('Session expired. Please sign in again.');
