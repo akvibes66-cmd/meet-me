@@ -1,1565 +1,2493 @@
-<script>
-  /* =========================================================
-     MEETME BY PELQ — RESILIENT SUPABASE FRONTEND
-     ========================================================= */
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  const SUPABASE_URL = 'https://exeqybodcbletjcdhjfw.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg';
+  <title>Meetme by PELQ — Global Skills Marketplace</title>
+  <meta name="description" content="Connect directly with skilled creators worldwide with zero platform fees." />
 
-  const APP_URL = 'https://playful-cobbler-95dd76.netlify.app';
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://exeqybodcbletjcdhjfw.supabase.co" crossorigin />
+  <link rel="dns-prefetch" href="https://exeqybodcbletjcdhjfw.supabase.co" />
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY,
-    {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --color-forest: #1A7A4A;
+      --color-forest-dark: #125734;
+      --color-cream: #FAF7F2;
+      --color-surface: #FFFFFF;
+      --color-charcoal: #0F1A14;
+      --color-muted: #5C6B61;
+      --color-accent: #F5C842;
+      --color-border: #E8E3DA;
+      --color-error: #D9383A;
+
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'DM Sans', -apple-system, sans-serif;
+
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --shadow-card: 0 4px 20px rgba(15, 26, 20, 0.05);
+      --shadow-hover: 0 12px 28px rgba(15, 26, 20, 0.12);
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-cream);
+      color: var(--color-charcoal);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .navbar {
+      background: var(--color-cream);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 0;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--color-charcoal);
+    }
+
+    .brand-logo-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-logo {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .brand-byline {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-muted);
+      margin-top: 2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid var(--color-charcoal);
+      color: var(--color-charcoal);
+      font-family: var(--font-sans);
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-charcoal);
+      color: var(--color-cream);
+    }
+
+    .hero {
+      padding: 48px 0 32px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      line-height: 1.1;
+      font-weight: 700;
+      max-width: 800px;
+      margin: 0 auto 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-subtitle {
+      color: var(--color-muted);
+      font-size: 1.125rem;
+      max-width: 540px;
+      margin: 0 auto 32px;
+    }
+
+    .search-container {
+      max-width: 680px;
+      margin: 0 auto 24px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-family: var(--font-sans);
+      border-radius: 99px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-forest);
+      box-shadow: 0 0 0 3px rgba(26, 122, 74, 0.15);
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 40px;
+      justify-content: center;
+      scrollbar-width: none;
+    }
+
+    .filters::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      color: var(--color-charcoal);
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 10px 20px;
+      border-radius: 99px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--color-forest);
+      color: var(--color-surface);
+      border-color: var(--color-forest);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 28px;
+      padding-bottom: 80px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--color-surface);
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      color: var(--color-muted);
+    }
+
+    .skill-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+    }
+
+    .skill-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--color-forest);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      color: var(--color-forest);
+      font-size: 1.2rem;
+      flex: 0 0 auto;
+    }
+
+    .peer-info .name {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .peer-info .meta {
+      font-size: 0.825rem;
+      color: var(--color-muted);
+    }
+
+    .skill-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .skill-desc {
+      font-size: 0.925rem;
+      color: var(--color-muted);
+      margin-bottom: 20px;
+      word-break: break-word;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--color-border);
+    }
+
+    .price-tag {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--color-forest);
+    }
+
+    .btn-primary {
+      background: var(--color-forest);
+      color: var(--color-surface);
+      border: none;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-forest-dark);
+    }
+
+    .btn-primary:disabled,
+    .btn-secondary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 26, 20, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: var(--shadow-hover);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--color-muted);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-charcoal);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      background: var(--color-surface);
+      color: var(--color-charcoal);
+      transition: var(--transition);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--color-forest);
+      box-shadow: 0 0 0 3px rgba(26, 122, 74, 0.15);
+    }
+
+    .error-text {
+      color: var(--color-error);
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .has-error input,
+    .has-error select,
+    .has-error textarea {
+      border-color: var(--color-error);
+    }
+
+    .has-error .error-text {
+      display: block;
+    }
+
+    .contact-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+    }
+
+    .btn-close {
+      background: var(--color-cream);
+      color: var(--color-charcoal);
+      border: 1px solid var(--color-border);
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    footer {
+      border-top: 1px solid var(--color-border);
+      padding: 24px 0;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--color-muted);
+    }
+
+    @media (max-width: 600px) {
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        justify-content: flex-start;
+      }
+
+      .card-footer {
+        align-items: flex-end;
+        flex-wrap: wrap;
       }
     }
-  );
+  </style>
+</head>
 
-  /* =========================================================
-     STATE
-     ========================================================= */
+<body>
 
-  let currentFilter = 'All';
-  let searchQuery = '';
-  let currentUser = null;
+  <nav class="navbar">
+    <div class="container nav-content">
+      <a href="#" class="brand">
+        <div class="brand-logo-container">
+          <span class="brand-logo">Meetme</span>
+          <span class="brand-byline">by PELQ</span>
+        </div>
+      </a>
 
-  let authCooldownUntil = 0;
-  let renderSequence = 0;
-  let isSigningIn = false;
+      <div class="nav-actions">
+        <button
+          id="authNavBtn"
+          class="btn-secondary"
+          type="button"
+          onclick="openAuthModal()"
+        >
+          Sign In
+        </button>
 
-  /* =========================================================
-     DOM HELPERS
-     ========================================================= */
+        <button
+          class="btn-primary"
+          type="button"
+          onclick="openPostModal()"
+        >
+          Post a Skill
+        </button>
+      </div>
+    </div>
+  </nav>
 
-  function $(id) {
-    return document.getElementById(id);
-  }
+  <main class="container">
 
-  function setButtonLoading(button, loading, loadingText, normalText) {
-    if (!button) return;
+    <section class="hero">
+      <h1 class="hero-title">
+        Trade skills directly with creators worldwide.
+      </h1>
 
-    button.disabled = loading;
-    button.innerText = loading ? loadingText : normalText;
-  }
+      <p class="hero-subtitle">
+        Need a quick photo edit, code review, or design work?
+        Connect directly with skilled creators everywhere via Meetme by PELQ.
+      </p>
 
-  function showStatus(message, type = 'info') {
-    let status = $('appStatus');
+      <div class="search-container">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search by skill, title, creator name, or location..."
+          oninput="handleSearch()"
+          autocomplete="off"
+        />
+      </div>
+    </section>
 
-    if (!status) {
-      status = document.createElement('div');
-      status.id = 'appStatus';
+    <div class="filters">
+      <button
+        type="button"
+        class="filter-btn active"
+        onclick="filterCategory('All', this)"
+      >
+        All Skills
+      </button>
 
-      Object.assign(status.style, {
-        position: 'fixed',
-        left: '50%',
-        bottom: '24px',
-        transform: 'translateX(-50%)',
-        width: 'min(92vw, 520px)',
-        padding: '14px 18px',
-        borderRadius: '12px',
-        background: '#ffffff',
-        color: '#0F1A14',
-        border: '1px solid #E8E3DA',
-        boxShadow: '0 12px 28px rgba(15,26,20,.15)',
-        zIndex: '9999',
-        fontSize: '14px',
-        fontWeight: '600',
-        textAlign: 'center',
-        transition: 'opacity .25s ease',
-        opacity: '0',
-        pointerEvents: 'none'
-      });
+      <button
+        type="button"
+        class="filter-btn"
+        onclick="filterCategory('Photo & Video', this)"
+      >
+        📸 Photo & Video
+      </button>
 
-      document.body.appendChild(status);
-    }
+      <button
+        type="button"
+        class="filter-btn"
+        onclick="filterCategory('Code & Web', this)"
+      >
+        💻 Code & Web
+      </button>
 
-    status.innerText = message;
-    status.style.opacity = '1';
+      <button
+        type="button"
+        class="filter-btn"
+        onclick="filterCategory('Tutoring & Notes', this)"
+      >
+        📝 Tutoring & Notes
+      </button>
 
-    if (type === 'error') {
-      status.style.borderColor = '#D9383A';
-    } else if (type === 'success') {
-      status.style.borderColor = '#1A7A4A';
-    } else {
-      status.style.borderColor = '#E8E3DA';
-    }
+      <button
+        type="button"
+        class="filter-btn"
+        onclick="filterCategory('Design & Branding', this)"
+      >
+        🎨 Design & Branding
+      </button>
+    </div>
 
-    clearTimeout(status._hideTimer);
+    <div class="card-grid" id="cardGrid"></div>
 
-    status._hideTimer = setTimeout(() => {
-      status.style.opacity = '0';
-    }, 5000);
-  }
+  </main>
 
-  function setAuthFormMessage(message = '') {
-    let box = $('authMessage');
+  <!-- POST SKILL MODAL -->
 
-    if (!box) {
-      const form = $('authForm');
-      if (!form) return;
+  <div class="modal-overlay" id="postModal">
+    <div class="modal-card">
 
-      box = document.createElement('div');
-      box.id = 'authMessage';
+      <div class="modal-header">
+        <h3>Post Your Skill</h3>
 
-      Object.assign(box.style, {
-        marginBottom: '14px',
-        padding: '10px 12px',
-        borderRadius: '10px',
-        fontSize: '13px',
-        display: 'none'
-      });
+        <button
+          type="button"
+          class="modal-close-btn"
+          onclick="closePostModal()"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+      </div>
 
-      form.insertBefore(box, form.firstChild);
-    }
+      <form
+        id="skillForm"
+        onsubmit="handleSkillSubmit(event)"
+        novalidate
+      >
 
-    if (!message) {
-      box.style.display = 'none';
-      box.innerText = '';
-      return;
-    }
+        <div class="form-row">
 
-    box.style.display = 'block';
-    box.innerText = message;
-  }
+          <div class="form-group" id="group-name">
+            <label for="fullName">Full Name</label>
 
-  /* =========================================================
-     SAFE HTML
-     ========================================================= */
+            <input
+              type="text"
+              id="fullName"
+              placeholder="e.g. Maya Lin"
+              maxlength="200"
+              autocomplete="name"
+            />
 
-  function escapeHTML(value) {
-    return String(value ?? '').replace(/[&<>"']/g, char => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    })[char]);
-  }
+            <span class="error-text">
+              Name is required.
+            </span>
+          </div>
 
-  function escapeAttribute(value) {
-    return escapeHTML(value);
-  }
+          <div class="form-group" id="group-meta">
+            <label for="collegeMeta">
+              Location / Role
+            </label>
 
-  /* =========================================================
-     ERROR HELPERS
-     ========================================================= */
+            <input
+              type="text"
+              id="collegeMeta"
+              placeholder="e.g. Lagos • Freelance Designer"
+              maxlength="200"
+            />
 
-  function getErrorMessage(error) {
-    if (!error) return '';
+            <span class="error-text">
+              Location/Role is required.
+            </span>
+          </div>
 
-    return String(
-      error.message ||
-      error.error_description ||
-      error.details ||
-      error.hint ||
-      ''
-    ).toLowerCase();
-  }
+        </div>
 
-  function isAuthError(error) {
-    if (!error) return false;
+        <div class="form-group" id="group-category">
 
-    const message = getErrorMessage(error);
+          <label for="category">
+            Category
+          </label>
 
-    return (
-      error.status === 401 ||
-      error.status === 403 ||
-      message.includes('jwt') ||
-      message.includes('token') ||
-      message.includes('session') ||
-      message.includes('unauthorized') ||
-      message.includes('invalid refresh token')
-    );
-  }
+          <select id="category">
+            <option value="">
+              Select Category
+            </option>
 
-  function isRateLimitError(error) {
-    if (!error) return false;
+            <option value="Photo & Video">
+              📸 Photo & Video
+            </option>
 
-    const message = getErrorMessage(error);
+            <option value="Code & Web">
+              💻 Code & Web
+            </option>
 
-    return (
-      error.status === 429 ||
-      message.includes('rate limit') ||
-      message.includes('too many') ||
-      message.includes('60 seconds') ||
-      message.includes('security') ||
-      message.includes('email rate')
-    );
-  }
+            <option value="Tutoring & Notes">
+              📝 Tutoring & Notes
+            </option>
 
-  function userFriendlyAuthError(error) {
-    if (!error) {
-      return 'We could not complete sign-in right now. Please try again.';
-    }
+            <option value="Design & Branding">
+              🎨 Design & Branding
+            </option>
+          </select>
 
-    if (isRateLimitError(error)) {
-      return 'Please wait a little before requesting another login link.';
-    }
+          <span class="error-text">
+            Please select a category.
+          </span>
 
-    const message = getErrorMessage(error);
+        </div>
 
-    if (
-      message.includes('smtp') ||
-      message.includes('sending') ||
-      message.includes('email') ||
-      message.includes('mailer')
-    ) {
-      return 'We could not send the login email right now. Please try again shortly.';
-    }
+        <div class="form-group" id="group-title">
 
-    if (
-      message.includes('redirect') ||
-      message.includes('url') ||
-      message.includes('redirect_to')
-    ) {
-      return 'The login destination is not configured correctly yet.';
-    }
+          <label for="skillTitle">
+            Skill Title
+          </label>
 
-    return 'We could not sign you in right now. Please try again.';
-  }
+          <input
+            type="text"
+            id="skillTitle"
+            placeholder="e.g. Portrait Color Grading & Edits"
+            maxlength="60"
+          />
 
-  /* =========================================================
-     SESSION MANAGEMENT
-     ========================================================= */
+          <span class="error-text">
+            Title required (max 60 chars).
+          </span>
 
-  async function safelyClearSession() {
-    try {
-      await supabaseClient.auth.signOut({ scope: 'local' });
-    } catch (error) {
-      console.warn('Local session cleanup failed:', error);
-    }
+        </div>
 
-    currentUser = null;
-    updateAuthUI();
-  }
+        <div class="form-group" id="group-desc">
 
-  async function refreshSessionSafely() {
-    try {
-      const { data, error } = await supabaseClient.auth.getSession();
+          <label for="skillDesc">
+            Description
+          </label>
 
-      if (error) {
-        console.warn('Could not load session:', error);
-        currentUser = null;
-        updateAuthUI();
-        return null;
+          <textarea
+            id="skillDesc"
+            rows="3"
+            placeholder="Describe turnaround time, scope, or deliverables..."
+            maxlength="160"
+          ></textarea>
+
+          <span class="error-text">
+            Description required (max 160 chars).
+          </span>
+
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group" id="group-price">
+
+            <label for="price">
+              Pricing
+            </label>
+
+            <input
+              type="text"
+              id="price"
+              placeholder="e.g. $15 or ₦10,000 / set"
+              maxlength="100"
+            />
+
+            <span class="error-text">
+              Pricing details required.
+            </span>
+
+          </div>
+
+          <div class="form-group" id="group-phone">
+
+            <label for="phone">
+              WhatsApp / Phone Number
+            </label>
+
+            <input
+              type="tel"
+              id="phone"
+              placeholder="e.g. 2348012345678"
+              autocomplete="tel"
+            />
+
+            <span class="error-text">
+              Valid international digits required.
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="form-group" id="group-image">
+
+          <label for="skillImage">
+            Listing Image (Optional)
+          </label>
+
+          <input
+            type="file"
+            id="skillImage"
+            accept="image/png, image/jpeg, image/webp"
+          />
+
+          <span class="error-text">
+            Image must be JPEG, PNG, or WEBP under 3MB.
+          </span>
+
+        </div>
+
+        <button
+          type="submit"
+          id="submitBtn"
+          class="btn-primary"
+          style="width: 100%; margin-top: 12px; padding: 12px;"
+        >
+          Publish Skill Listing
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL -->
+
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-card">
+
+      <div class="modal-header">
+
+        <h3>
+          Sign In to Meetme
+        </h3>
+
+        <button
+          type="button"
+          class="modal-close-btn"
+          onclick="closeAuthModal()"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <form
+        id="authForm"
+        onsubmit="handleAuthSubmit(event)"
+      >
+
+        <div class="form-group">
+
+          <label for="authEmail">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            id="authEmail"
+            placeholder="you@example.com"
+            required
+            autocomplete="email"
+          />
+
+        </div>
+
+        <button
+          type="submit"
+          id="authSubmitBtn"
+          class="btn-primary"
+          style="width: 100%; padding: 12px;"
+        >
+          Send Magic Link
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- CONTACT MODAL -->
+
+  <div class="modal-overlay" id="contactModal">
+
+    <div
+      class="modal-card"
+      style="text-align: center;"
+    >
+
+      <h3
+        id="modalName"
+        style="margin-bottom: 8px;"
+      >
+        Connect
+      </h3>
+
+      <p
+        style="
+          color: var(--color-muted);
+          margin-bottom: 24px;
+        "
+      >
+        Choose your preferred platform to arrange details directly.
+        Zero platform fees.
+      </p>
+
+      <div class="contact-links">
+
+        <a
+          id="whatsappLink"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="contact-btn btn-whatsapp"
+        >
+          Loading Phone Securely...
+        </a>
+
+        <button
+          type="button"
+          class="contact-btn btn-close"
+          onclick="closeContactModal()"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+
+    <div class="container">
+
+      <p>
+        <strong>Meetme</strong>
+        — Engineered by
+        <strong>PELQ</strong>
+      </p>
+
+    </div>
+
+  </footer>
+
+  <script>
+    const SUPABASE_URL =
+      'https://exeqybodcbletjcdhjfw.supabase.co';
+
+    const SUPABASE_ANON_KEY =
+      'sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg';
+
+    const APP_URL =
+      'https://playful-cobbler-95dd76.netlify.app';
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+          auth: {
+            autoRefreshToken: true,
+            persistSession: true,
+            detectSessionInUrl: true
+          }
+        }
+      );
+
+    let currentFilter = 'All';
+    let searchQuery = '';
+    let currentUser = null;
+
+    /* =====================================================
+       SESSION
+       ===================================================== */
+
+    async function purgeStaleSession() {
+      try {
+        await supabaseClient.auth.signOut({
+          scope: 'local'
+        });
+      } catch (e) {
+        console.warn(
+          'Session cleanup failed:',
+          e
+        );
       }
 
-      currentUser = data?.session?.user || null;
-      updateAuthUI();
-
-      return data?.session || null;
-    } catch (error) {
-      console.warn('Session initialization failed:', error);
       currentUser = null;
       updateAuthUI();
-      return null;
     }
-  }
 
-  /* =========================================================
-     AUTH STATE
-     ========================================================= */
+    function isJwtError(err) {
+      if (!err) return false;
 
-  supabaseClient.auth.onAuthStateChange((event, session) => {
-    currentUser = session?.user || null;
+      const msg =
+        String(err.message || '')
+          .toLowerCase();
 
-    updateAuthUI();
+      return (
+        msg.includes('jwt expired') ||
+        msg.includes('invalid jwt') ||
+        msg.includes('expired') ||
+        msg.includes('unauthorized') ||
+        msg.includes('invalid refresh token') ||
+        err.status === 401
+      );
+    }
 
-    /*
-      Don't blindly render multiple times during auth events.
-      One deferred render is enough.
-    */
-    setTimeout(() => {
-      renderGrid();
-    }, 0);
-  });
+    supabaseClient.auth.onAuthStateChange(
+      (event, session) => {
 
-  function updateAuthUI() {
-    const authBtn = $('authNavBtn');
+        currentUser =
+          session?.user || null;
 
-    if (!authBtn) return;
+        updateAuthUI();
 
-    authBtn.disabled = false;
+        /*
+          Delay rendering slightly so Supabase can finish
+          processing the magic-link callback.
+        */
+        setTimeout(() => {
+          renderGrid();
+        }, 0);
+      }
+    );
 
-    if (currentUser) {
-      authBtn.innerText = 'Sign Out';
+    async function initializeApp() {
+      try {
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.getSession();
 
-      authBtn.onclick = async () => {
-        authBtn.disabled = true;
-        authBtn.innerText = 'Signing Out...';
+        if (error) {
+          console.warn(
+            'Could not load session:',
+            error.message
+          );
 
-        try {
-          await supabaseClient.auth.signOut({ scope: 'local' });
           currentUser = null;
-          updateAuthUI();
-          renderGrid();
-          showStatus('You have been signed out.', 'success');
-        } catch (error) {
-          console.warn('Sign out failed:', error);
 
-          /*
-            Even when remote sign-out fails, clear the browser
-            session so the UI does not get stuck.
-          */
-          await safelyClearSession();
-
-          renderGrid();
-          showStatus('You have been signed out on this device.', 'success');
+          try {
+            await supabaseClient.auth.signOut({
+              scope: 'local'
+            });
+          } catch (_) {}
+        } else {
+          currentUser =
+            data?.session?.user || null;
         }
-      };
-    } else {
-      authBtn.innerText = 'Sign In';
-      authBtn.onclick = openAuthModal;
-    }
-  }
-
-  /* =========================================================
-     AUTH MODAL
-     ========================================================= */
-
-  function openAuthModal() {
-    const modal = $('authModal');
-
-    if (!modal) return;
-
-    setAuthFormMessage('');
-    modal.classList.add('active');
-
-    setTimeout(() => {
-      $('authEmail')?.focus();
-    }, 100);
-  }
-
-  function closeAuthModal() {
-    const modal = $('authModal');
-    const form = $('authForm');
-
-    if (modal) modal.classList.remove('active');
-    if (form) form.reset();
-
-    setAuthFormMessage('');
-  }
-
-  async function handleAuthSubmit(e) {
-    e.preventDefault();
-
-    if (isSigningIn) return;
-
-    const emailInput = $('authEmail');
-    const button = $('authSubmitBtn');
-
-    if (!emailInput || !button) return;
-
-    const email = emailInput.value.trim().toLowerCase();
-
-    setAuthFormMessage('');
-
-    if (!email) {
-      setAuthFormMessage('Please enter your email address.');
-      emailInput.focus();
-      return;
-    }
-
-    /*
-      Browser-side validation.
-      Supabase performs its own validation too.
-    */
-    const emailLooksValid =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-    if (!emailLooksValid) {
-      setAuthFormMessage('Please enter a valid email address.');
-      emailInput.focus();
-      return;
-    }
-
-    const now = Date.now();
-
-    if (now < authCooldownUntil) {
-      const secondsRemaining = Math.ceil(
-        (authCooldownUntil - now) / 1000
-      );
-
-      setAuthFormMessage(
-        `Please wait ${secondsRemaining} second${secondsRemaining === 1 ? '' : 's'} before requesting another link.`
-      );
-
-      return;
-    }
-
-    isSigningIn = true;
-
-    setAuthFormMessage(
-      'Sending your secure login link...'
-    );
-
-    setButtonLoading(
-      button,
-      true,
-      'Sending link...',
-      'Send Magic Link'
-    );
-
-    try {
-      const { error } = await supabaseClient.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: APP_URL,
-          shouldCreateUser: true
-        }
-      });
-
-      if (error) {
-        console.error('Magic link request failed:', error);
-
-        if (isRateLimitError(error)) {
-          authCooldownUntil = Date.now() + 60000;
-
-          setAuthFormMessage(
-            'A login email was requested recently. Please wait about 60 seconds before trying again.'
-          );
-
-          return;
-        }
-
-        if (isAuthError(error)) {
-          setAuthFormMessage(
-            'Your session needs to be refreshed. Please close this window and try again.'
-          );
-
-          return;
-        }
-
-        setAuthFormMessage(
-          userFriendlyAuthError(error)
+      } catch (error) {
+        console.warn(
+          'Session initialization error:',
+          error
         );
 
-        return;
+        currentUser = null;
       }
 
-      /*
-        Supabase documents a default 60-second per-user
-        window for OTP/magic-link requests.
-      */
-      authCooldownUntil = Date.now() + 60000;
+      updateAuthUI();
+      renderGrid();
+    }
 
-      setAuthFormMessage(
-        'Login link sent. Check your inbox and spam folder.'
-      );
+    /* =====================================================
+       AUTH UI
+       ===================================================== */
 
-      showStatus(
-        'Check your email for your Meetme login link.',
-        'success'
-      );
+    function updateAuthUI() {
+
+      const authBtn =
+        document.getElementById(
+          'authNavBtn'
+        );
+
+      if (!authBtn) return;
+
+      if (currentUser) {
+
+        authBtn.innerText =
+          'Sign Out';
+
+        authBtn.onclick =
+          async () => {
+
+            authBtn.disabled = true;
+            authBtn.innerText =
+              'Signing Out...';
+
+            try {
+
+              const {
+                error
+              } =
+                await supabaseClient.auth
+                  .signOut({
+                    scope: 'local'
+                  });
+
+              if (error) {
+                console.warn(
+                  'Sign out warning:',
+                  error
+                );
+              }
+
+            } catch (error) {
+              console.warn(
+                'Sign out error:',
+                error
+              );
+            }
+
+            currentUser = null;
+
+            authBtn.disabled =
+              false;
+
+            updateAuthUI();
+
+            renderGrid();
+          };
+
+      } else {
+
+        authBtn.disabled =
+          false;
+
+        authBtn.innerText =
+          'Sign In';
+
+        authBtn.onclick =
+          openAuthModal;
+      }
+    }
+
+    /* =====================================================
+       AUTH MODAL
+       ===================================================== */
+
+    function openAuthModal() {
+
+      document
+        .getElementById('authModal')
+        .classList.add('active');
 
       setTimeout(() => {
-        closeAuthModal();
-      }, 1800);
-
-    } catch (error) {
-      console.error('Unexpected sign-in failure:', error);
-
-      setAuthFormMessage(
-        'Something interrupted the login request. Please try again shortly.'
-      );
-
-    } finally {
-      isSigningIn = false;
-
-      setButtonLoading(
-        button,
-        false,
-        'Sending link...',
-        'Send Magic Link'
-      );
+        document
+          .getElementById('authEmail')
+          ?.focus();
+      }, 100);
     }
-  }
 
-  /* =========================================================
-     SEARCH
-     ========================================================= */
+    function closeAuthModal() {
 
-  function sanitizeSearchInput(value) {
-    return String(value || '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 100);
-  }
+      document
+        .getElementById('authModal')
+        .classList.remove('active');
 
-  function handleSearch() {
-    searchQuery = sanitizeSearchInput(
-      $('searchInput')?.value || ''
-    );
-
-    renderGrid();
-  }
-
-  /*
-    Prevent search text from accidentally becoming malformed
-    PostgREST filter syntax.
-  */
-  function escapePostgrestSearch(value) {
-    return String(value || '')
-      .replace(/\\/g, '\\\\')
-      .replace(/%/g, '\\%')
-      .replace(/_/g, '\\_')
-      .replace(/,/g, '\\,')
-      .replace(/\./g, '\\.')
-      .replace(/\(/g, '\\(')
-      .replace(/\)/g, '\\)')
-      .replace(/:/g, '\\:');
-  }
-
-  /* =========================================================
-     FETCH SKILLS
-     ========================================================= */
-
-  async function fetchSkills() {
-    try {
-      let query = supabaseClient
-        .from('skills')
-        .select(
-          'id, name, meta, category, title, description, price, user_id, created_at, image_url'
-        )
-        .order('created_at', {
-          ascending: false
-        })
-        .limit(100);
-
-      if (currentFilter !== 'All') {
-        query = query.eq(
-          'category',
-          currentFilter
-        );
-      }
-
-      if (searchQuery.length > 0) {
-        const safeSearch =
-          escapePostgrestSearch(searchQuery);
-
-        query = query.or(
-          [
-            `title.ilike.%${safeSearch}%`,
-            `description.ilike.%${safeSearch}%`,
-            `meta.ilike.%${safeSearch}%`,
-            `name.ilike.%${safeSearch}%`
-          ].join(',')
-        );
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error loading skills:', error);
-
-        if (isAuthError(error)) {
-          await safelyClearSession();
-
-          /*
-            Retry exactly once as a guest.
-          */
-          return await fetchSkillsAsGuest();
-        }
-
-        showStatus(
-          'Listings are temporarily unavailable. Please try again.',
-          'error'
-        );
-
-        return [];
-      }
-
-      return Array.isArray(data) ? data : [];
-
-    } catch (error) {
-      console.error('Unexpected skills fetch error:', error);
-
-      showStatus(
-        'We could not load listings right now.',
-        'error'
-      );
-
-      return [];
+      document
+        .getElementById('authForm')
+        .reset();
     }
-  }
 
-  async function fetchSkillsAsGuest() {
-    try {
-      let query = supabaseClient
-        .from('skills')
-        .select(
-          'id, name, meta, category, title, description, price, user_id, created_at, image_url'
-        )
-        .order('created_at', {
-          ascending: false
-        })
-        .limit(100);
+    /* =====================================================
+       MAGIC LINK
+       ===================================================== */
 
-      if (currentFilter !== 'All') {
-        query = query.eq(
-          'category',
-          currentFilter
+    async function handleAuthSubmit(e) {
+
+      e.preventDefault();
+
+      const emailInput =
+        document.getElementById(
+          'authEmail'
         );
+
+      const btn =
+        document.getElementById(
+          'authSubmitBtn'
+        );
+
+      const email =
+        emailInput.value.trim();
+
+      if (!email) {
+        alert(
+          'Please enter your email address.'
+        );
+        return;
       }
 
-      if (searchQuery.length > 0) {
-        const safeSearch =
-          escapePostgrestSearch(searchQuery);
+      btn.disabled = true;
+      btn.innerText =
+        'Sending link...';
 
-        query = query.or(
-          [
-            `title.ilike.%${safeSearch}%`,
-            `description.ilike.%${safeSearch}%`,
-            `meta.ilike.%${safeSearch}%`,
-            `name.ilike.%${safeSearch}%`
-          ].join(',')
-        );
-      }
+      try {
 
-      const { data, error } = await query;
-
-      if (error) {
-        console.error(
-          'Guest skills fetch failed:',
+        const {
           error
-        );
+        } =
+          await supabaseClient.auth
+            .signInWithOtp({
 
-        return [];
-      }
+              email,
 
-      return Array.isArray(data) ? data : [];
+              options: {
+                emailRedirectTo:
+                  APP_URL,
 
-    } catch (error) {
-      console.error(
-        'Unexpected guest fetch error:',
-        error
-      );
+                shouldCreateUser:
+                  true
+              }
+            });
 
-      return [];
-    }
-  }
+        if (error) {
 
-  /* =========================================================
-     RENDER GRID
-     ========================================================= */
-
-  async function renderGrid() {
-    const grid = $('cardGrid');
-
-    if (!grid) return;
-
-    const thisRender = ++renderSequence;
-
-    grid.innerHTML = `
-      <div class="empty-state">
-        Loading live listings...
-      </div>
-    `;
-
-    const skills = await fetchSkills();
-
-    /*
-      A newer render may have started while this request
-      was running. Do not overwrite its result.
-    */
-    if (thisRender !== renderSequence) {
-      return;
-    }
-
-    grid.innerHTML = '';
-
-    if (!skills.length) {
-      grid.innerHTML = `
-        <div class="empty-state">
-          No skill listings match your query.
-        </div>
-      `;
-      return;
-    }
-
-    const fragment = document.createDocumentFragment();
-
-    skills.forEach(skill => {
-      const initial =
-        skill.name
-          ? String(skill.name).charAt(0).toUpperCase()
-          : '?';
-
-      const isOwner =
-        Boolean(currentUser) &&
-        currentUser.id === skill.user_id;
-
-      const card =
-        document.createElement('article');
-
-      card.className = 'skill-card';
-
-      /*
-        We construct most card content without trusting raw
-        HTML from the database.
-      */
-      const header = document.createElement('div');
-      header.className = 'card-header';
-
-      const avatar =
-        document.createElement('div');
-
-      avatar.className = 'avatar';
-      avatar.innerText = initial;
-
-      const peerInfo =
-        document.createElement('div');
-
-      peerInfo.className = 'peer-info';
-
-      const name =
-        document.createElement('div');
-
-      name.className = 'name';
-      name.innerText = skill.name || 'Anonymous';
-
-      const meta =
-        document.createElement('div');
-
-      meta.className = 'meta';
-      meta.innerText = skill.meta || '';
-
-      peerInfo.appendChild(name);
-      peerInfo.appendChild(meta);
-
-      header.appendChild(avatar);
-      header.appendChild(peerInfo);
-
-      const content =
-        document.createElement('div');
-
-      content.appendChild(header);
-
-      if (skill.image_url) {
-        const image =
-          document.createElement('img');
-
-        image.src = String(skill.image_url);
-        image.alt = 'Skill preview';
-        image.loading = 'lazy';
-        image.decoding = 'async';
-
-        Object.assign(image.style, {
-          width: '100%',
-          height: '180px',
-          objectFit: 'cover',
-          borderRadius: 'var(--radius-sm)',
-          marginBottom: '12px'
-        });
-
-        image.onerror = () => {
-          image.remove();
-        };
-
-        content.appendChild(image);
-      }
-
-      const title =
-        document.createElement('h2');
-
-      title.className = 'skill-title';
-      title.innerText = skill.title || 'Untitled skill';
-
-      const description =
-        document.createElement('p');
-
-      description.className = 'skill-desc';
-      description.innerText =
-        skill.description || '';
-
-      content.appendChild(title);
-      content.appendChild(description);
-
-      const footer =
-        document.createElement('div');
-
-      footer.className = 'card-footer';
-
-      const price =
-        document.createElement('span');
-
-      price.className = 'price-tag';
-      price.innerText = skill.price || '';
-
-      const actions =
-        document.createElement('div');
-
-      if (isOwner) {
-        const deleteButton =
-          document.createElement('button');
-
-        deleteButton.className =
-          'btn-secondary';
-
-        deleteButton.innerText = 'Delete';
-
-        Object.assign(deleteButton.style, {
-          marginRight: '8px',
-          color: 'var(--color-error)',
-          borderColor: 'var(--color-error)'
-        });
-
-        deleteButton.onclick = () =>
-          deleteListing(skill.id);
-
-        actions.appendChild(deleteButton);
-      }
-
-      const messageButton =
-        document.createElement('button');
-
-      messageButton.className = 'btn-primary';
-
-      const firstName =
-        String(skill.name || '')
-          .trim()
-          .split(/\s+/)[0] || 'Creator';
-
-      messageButton.innerText =
-        `Message ${firstName}`;
-
-      messageButton.onclick = () =>
-        openContactModal(
-          skill.id,
-          skill.name || 'Creator'
-        );
-
-      actions.appendChild(messageButton);
-
-      footer.appendChild(price);
-      footer.appendChild(actions);
-
-      card.appendChild(content);
-      card.appendChild(footer);
-
-      fragment.appendChild(card);
-    });
-
-    grid.appendChild(fragment);
-  }
-
-  /* =========================================================
-     DELETE LISTING
-     ========================================================= */
-
-  async function deleteListing(skillId) {
-    if (!currentUser) {
-      showStatus(
-        'Please sign in to manage your listings.',
-        'error'
-      );
-
-      openAuthModal();
-      return;
-    }
-
-    if (!skillId) {
-      showStatus(
-        'This listing could not be identified.',
-        'error'
-      );
-      return;
-    }
-
-    const confirmed =
-      window.confirm(
-        'Are you sure you want to delete this listing?'
-      );
-
-    if (!confirmed) return;
-
-    try {
-      const { error } =
-        await supabaseClient
-          .from('skills')
-          .delete()
-          .eq('id', skillId);
-
-      if (error) {
-        console.error(
-          'Delete listing failed:',
-          error
-        );
-
-        if (isAuthError(error)) {
-          await safelyClearSession();
-
-          showStatus(
-            'Your session expired. Please sign in again.',
-            'error'
+          console.error(
+            'Magic link error:',
+            error
           );
 
-          openAuthModal();
+          const message =
+            String(
+              error.message || ''
+            ).toLowerCase();
+
+          if (
+            error.status === 429 ||
+            message.includes('rate') ||
+            message.includes('too many') ||
+            message.includes('60 seconds')
+          ) {
+
+            alert(
+              'Please wait about 60 seconds before requesting another login link.'
+            );
+
+          } else if (
+            message.includes('redirect') ||
+            message.includes('url')
+          ) {
+
+            alert(
+              'The login redirect is not configured correctly. Please try again shortly.'
+            );
+
+          } else {
+
+            alert(
+              'Could not send the login link right now. Please try again shortly.'
+            );
+          }
+
           return;
         }
 
-        showStatus(
-          'We could not delete that listing. Please try again.',
-          'error'
+        alert(
+          'Check your inbox! We sent a login link to ' +
+          email
         );
 
-        return;
-      }
+        closeAuthModal();
 
-      showStatus(
-        'Listing deleted successfully.',
-        'success'
-      );
+      } catch (error) {
 
-      await renderGrid();
-
-    } catch (error) {
-      console.error(
-        'Unexpected delete error:',
-        error
-      );
-
-      showStatus(
-        'We could not delete that listing right now.',
-        'error'
-      );
-    }
-  }
-
-  /* =========================================================
-     POST MODAL
-     ========================================================= */
-
-  function openPostModal() {
-    if (!currentUser) {
-      showStatus(
-        'Sign in first to post a skill.',
-        'info'
-      );
-
-      openAuthModal();
-      return;
-    }
-
-    $('postModal')?.classList.add('active');
-  }
-
-  function closePostModal() {
-    $('postModal')?.classList.remove('active');
-    $('skillForm')?.reset();
-
-    document
-      .querySelectorAll('#skillForm .has-error')
-      .forEach(element => {
-        element.classList.remove('has-error');
-      });
-  }
-
-  /* =========================================================
-     SKILL SUBMISSION
-     ========================================================= */
-
-  function validateSkillForm() {
-    const fields = {
-      name: {
-        id: 'fullName',
-        group: 'group-name',
-        validate: value =>
-          value.trim().length > 0
-      },
-
-      meta: {
-        id: 'collegeMeta',
-        group: 'group-meta',
-        validate: value =>
-          value.trim().length > 0
-      },
-
-      category: {
-        id: 'category',
-        group: 'group-category',
-        validate: value =>
-          value !== ''
-      },
-
-      title: {
-        id: 'skillTitle',
-        group: 'group-title',
-        validate: value =>
-          value.trim().length > 0 &&
-          value.trim().length <= 60
-      },
-
-      description: {
-        id: 'skillDesc',
-        group: 'group-desc',
-        validate: value =>
-          value.trim().length > 0 &&
-          value.trim().length <= 160
-      },
-
-      price: {
-        id: 'price',
-        group: 'group-price',
-        validate: value =>
-          value.trim().length > 0
-      },
-
-      phone: {
-        id: 'phone',
-        group: 'group-phone',
-        validate: value => {
-          const digits =
-            value.replace(/\D/g, '');
-
-          return (
-            digits.length >= 7 &&
-            digits.length <= 15
-          );
-        }
-      }
-    };
-
-    let valid = true;
-    const result = {};
-
-    Object.entries(fields).forEach(([key, field]) => {
-      const input = $(field.id);
-      const group = $(field.group);
-
-      if (!input || !group) {
-        valid = false;
-        return;
-      }
-
-      const value = input.value;
-
-      if (!field.validate(value)) {
-        group.classList.add('has-error');
-        valid = false;
-      } else {
-        group.classList.remove('has-error');
-
-        result[key] = value.trim();
-      }
-    });
-
-    return {
-      valid,
-      data: result
-    };
-  }
-
-  async function handleSkillSubmit(e) {
-    e.preventDefault();
-
-    if (!currentUser) {
-      showStatus(
-        'Your session has ended. Please sign in again.',
-        'error'
-      );
-
-      closePostModal();
-      openAuthModal();
-      return;
-    }
-
-    const validation =
-      validateSkillForm();
-
-    const imageInput =
-      $('skillImage');
-
-    const imageFile =
-      imageInput?.files?.[0] || null;
-
-    if (imageFile) {
-      const allowedTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/webp'
-      ];
-
-      if (!allowedTypes.includes(imageFile.type)) {
-        $('group-image')?.classList.add(
-          'has-error'
+        console.error(
+          'Unexpected authentication error:',
+          error
         );
 
-        showStatus(
-          'Please use a JPEG, PNG, or WEBP image.',
-          'error'
+        alert(
+          'Sign-in is temporarily unavailable. Please try again shortly.'
         );
 
-        return;
+      } finally {
+
+        btn.disabled = false;
+
+        btn.innerText =
+          'Send Magic Link';
       }
-
-      if (imageFile.size > 3 * 1024 * 1024) {
-        $('group-image')?.classList.add(
-          'has-error'
-        );
-
-        showStatus(
-          'Images must be 3MB or smaller.',
-          'error'
-        );
-
-        return;
-      }
-
-      $('group-image')?.classList.remove(
-        'has-error'
-      );
     }
 
-    if (!validation.valid) {
-      showStatus(
-        'Please correct the highlighted fields.',
-        'error'
-      );
+    /* =====================================================
+       SEARCH
+       ===================================================== */
 
-      return;
+    function handleSearch() {
+
+      searchQuery =
+        document
+          .getElementById(
+            'searchInput'
+          )
+          .value
+          .trim()
+          .slice(0, 100);
+
+      renderGrid();
     }
 
-    const submitButton =
-      $('submitBtn');
+    /*
+      Escape characters that can interfere with the
+      PostgREST .or() filter string.
+    */
+    function escapeSearchValue(value) {
 
-    setButtonLoading(
-      submitButton,
-      true,
-      'Publishing...',
-      'Publish Skill Listing'
-    );
+      return String(value || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/,/g, '\\,')
+        .replace(/\./g, '\\.')
+        .replace(/\(/g, '\\(')
+        .replace(/\)/g, '\\)');
+    }
 
-    let uploadedFilePath = null;
+    /* =====================================================
+       FETCH SKILLS
+       ===================================================== */
 
-    try {
-      let publicImageUrl = null;
+    async function fetchSkills() {
 
-      /*
-        Upload image first, if supplied.
-      */
-      if (imageFile) {
-        const extension =
-          imageFile.type === 'image/jpeg'
-            ? 'jpg'
-            : imageFile.type === 'image/png'
-              ? 'png'
-              : 'webp';
+      try {
 
-        uploadedFilePath =
-          `${currentUser.id}/${crypto.randomUUID()}.${extension}`;
-
-        const {
-          error: uploadError
-        } = await supabaseClient.storage
-          .from('skill-images')
-          .upload(
-            uploadedFilePath,
-            imageFile,
-            {
-              cacheControl: '3600',
-              contentType: imageFile.type,
-              upsert: false
-            }
-          );
-
-        if (uploadError) {
-          console.error(
-            'Image upload failed:',
-            uploadError
-          );
-
-          if (isAuthError(uploadError)) {
-            await safelyClearSession();
-
-            showStatus(
-              'Your session expired. Please sign in again.',
-              'error'
+        let query =
+          supabaseClient
+            .from('skills')
+            .select(
+              'id, name, meta, category, title, description, price, user_id, created_at, image_url'
+            )
+            .order(
+              'created_at',
+              {
+                ascending: false
+              }
             );
 
-            closePostModal();
+        if (
+          currentFilter !==
+          'All'
+        ) {
+
+          query =
+            query.eq(
+              'category',
+              currentFilter
+            );
+        }
+
+        if (
+          searchQuery.length > 0
+        ) {
+
+          const safeSearch =
+            escapeSearchValue(
+              searchQuery
+            );
+
+          query =
+            query.or(
+              `title.ilike.%${safeSearch}%,description.ilike.%${safeSearch}%,meta.ilike.%${safeSearch}%,name.ilike.%${safeSearch}%`
+            );
+        }
+
+        const {
+          data,
+          error
+        } =
+          await query;
+
+        if (error) {
+
+          console.error(
+            'Error loading skills:',
+            error
+          );
+
+          if (
+            isJwtError(error)
+          ) {
+
+            await purgeStaleSession();
+
+            try {
+
+              const {
+                data: retryData,
+                error: retryError
+              } =
+                await supabaseClient
+                  .from('skills')
+                  .select(
+                    'id, name, meta, category, title, description, price, user_id, created_at, image_url'
+                  )
+                  .order(
+                    'created_at',
+                    {
+                      ascending: false
+                    }
+                  );
+
+              if (!retryError) {
+                return retryData || [];
+              }
+
+            } catch (_) {}
+          }
+
+          return [];
+        }
+
+        return Array.isArray(data)
+          ? data
+          : [];
+
+      } catch (error) {
+
+        console.error(
+          'Unexpected skills fetch error:',
+          error
+        );
+
+        return [];
+      }
+    }
+
+    /* =====================================================
+       RENDER GRID
+       ===================================================== */
+
+    async function renderGrid() {
+
+      const grid =
+        document.getElementById(
+          'cardGrid'
+        );
+
+      if (!grid) return;
+
+      grid.innerHTML =
+        '<div class="empty-state">Loading live listings...</div>';
+
+      const skills =
+        await fetchSkills();
+
+      grid.innerHTML = '';
+
+      if (
+        !skills ||
+        skills.length === 0
+      ) {
+
+        grid.innerHTML =
+          '<div class="empty-state">No skill listings match your query.</div>';
+
+        return;
+      }
+
+      skills.forEach(skill => {
+
+        const initial =
+          skill.name
+            ? String(
+                skill.name
+              )
+                .charAt(0)
+                .toUpperCase()
+            : '?';
+
+        const isOwner =
+          currentUser &&
+          currentUser.id ===
+            skill.user_id;
+
+        const card =
+          document.createElement(
+            'article'
+          );
+
+        card.className =
+          'skill-card';
+
+        const safeName =
+          escapeHTML(
+            skill.name ||
+            'Creator'
+          );
+
+        const safeMeta =
+          escapeHTML(
+            skill.meta ||
+            ''
+          );
+
+        const safeTitle =
+          escapeHTML(
+            skill.title ||
+            ''
+          );
+
+        const safeDescription =
+          escapeHTML(
+            skill.description ||
+            ''
+          );
+
+        const safePrice =
+          escapeHTML(
+            skill.price ||
+            ''
+          );
+
+        const safeImageURL =
+          escapeHTML(
+            skill.image_url ||
+            ''
+          );
+
+        const safeSkillId =
+          escapeHTML(
+            skill.id
+          );
+
+        const firstName =
+          escapeHTML(
+            String(
+              skill.name ||
+              ''
+            )
+              .trim()
+              .split(/\s+/)[0] ||
+              'Creator'
+          );
+
+        const imageHTML =
+          safeImageURL
+            ? `
+              <img
+                src="${safeImageURL}"
+                alt="Skill preview"
+                loading="lazy"
+                style="
+                  width:100%;
+                  height:180px;
+                  object-fit:cover;
+                  border-radius:var(--radius-sm);
+                  margin-bottom:12px;
+                "
+                onerror="this.remove()"
+              >
+            `
+            : '';
+
+        const deleteHTML =
+          isOwner
+            ? `
+              <button
+                type="button"
+                class="btn-secondary"
+                style="
+                  margin-right:8px;
+                  color:var(--color-error);
+                  border-color:var(--color-error);
+                "
+                onclick="deleteListing('${safeSkillId}')"
+              >
+                Delete
+              </button>
+            `
+            : '';
+
+        card.innerHTML = `
+          <div>
+
+            <div class="card-header">
+
+              <div class="avatar">
+                ${escapeHTML(initial)}
+              </div>
+
+              <div class="peer-info">
+
+                <div class="name">
+                  ${safeName}
+                </div>
+
+                <div class="meta">
+                  ${safeMeta}
+                </div>
+
+              </div>
+
+            </div>
+
+            ${imageHTML}
+
+            <h2 class="skill-title">
+              ${safeTitle}
+            </h2>
+
+            <p class="skill-desc">
+              ${safeDescription}
+            </p>
+
+          </div>
+
+          <div class="card-footer">
+
+            <span class="price-tag">
+              ${safePrice}
+            </span>
+
+            <div>
+
+              ${deleteHTML}
+
+              <button
+                type="button"
+                class="btn-primary"
+                onclick="openContactModal('${safeSkillId}', '${escapeHTML(skill.name || 'Creator')}')"
+              >
+                Message ${firstName}
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* =====================================================
+       DELETE
+       ===================================================== */
+
+    async function deleteListing(
+      skillId
+    ) {
+
+      if (!currentUser) {
+
+        alert(
+          'You must be signed in to manage your listing.'
+        );
+
+        openAuthModal();
+
+        return;
+      }
+
+      if (
+        !skillId
+      ) {
+
+        alert(
+          'Invalid listing.'
+        );
+
+        return;
+      }
+
+      if (
+        !confirm(
+          'Are you sure you want to delete this listing?'
+        )
+      ) {
+        return;
+      }
+
+      try {
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from('skills')
+            .delete()
+            .eq(
+              'id',
+              skillId
+            );
+
+        if (error) {
+
+          console.error(
+            'Delete error:',
+            error
+          );
+
+          if (
+            isJwtError(error)
+          ) {
+
+            alert(
+              'Session expired. Please sign in again.'
+            );
+
+            await purgeStaleSession();
+
             openAuthModal();
 
             return;
           }
 
-          showStatus(
-            'The image could not be uploaded. Please try again.',
-            'error'
+          alert(
+            'Failed to delete listing: ' +
+            error.message
           );
 
           return;
         }
 
-        const {
-          data: urlData
-        } = supabaseClient.storage
-          .from('skill-images')
-          .getPublicUrl(
-            uploadedFilePath
-          );
+        await renderGrid();
 
-        publicImageUrl =
-          urlData?.publicUrl || null;
-      }
+      } catch (error) {
 
-      const digitsOnly =
-        validation.data.phone.replace(
-          /\D/g,
-          ''
+        console.error(
+          'Unexpected delete error:',
+          error
         );
 
-      /*
-        Database insert.
-      */
-      const { error: insertError } =
-        await supabaseClient
-          .from('skills')
-          .insert({
-            name: validation.data.name,
-            meta: validation.data.meta,
-            category: validation.data.category,
-            title: validation.data.title,
-            description: validation.data.description,
-            price: validation.data.price,
-            phone: digitsOnly,
-            user_id: currentUser.id,
-            image_url: publicImageUrl
-          });
+        alert(
+          'Failed to delete the listing. Please try again.'
+        );
+      }
+    }
 
-      if (insertError) {
+    /* =====================================================
+       POST MODAL
+       ===================================================== */
+
+    function openPostModal() {
+
+      if (!currentUser) {
+
+        alert(
+          'You must be signed in to post a skill listing.'
+        );
+
+        openAuthModal();
+
+        return;
+      }
+
+      document
+        .getElementById(
+          'postModal'
+        )
+        .classList.add(
+          'active'
+        );
+    }
+
+    /* =====================================================
+       SKILL SUBMIT
+       ===================================================== */
+
+    async function handleSkillSubmit(e) {
+
+      e.preventDefault();
+
+      if (!currentUser) {
+
+        alert(
+          'Session expired. Please sign in again.'
+        );
+
+        openAuthModal();
+
+        return;
+      }
+
+      const fields = {
+
+        name: {
+          id: 'fullName',
+          group: 'group-name',
+          validate:
+            val =>
+              val
+                .trim()
+                .length > 0
+        },
+
+        meta: {
+          id: 'collegeMeta',
+          group: 'group-meta',
+          validate:
+            val =>
+              val
+                .trim()
+                .length > 0
+        },
+
+        category: {
+          id: 'category',
+          group: 'group-category',
+          validate:
+            val =>
+              val !== ''
+        },
+
+        title: {
+          id: 'skillTitle',
+          group: 'group-title',
+          validate:
+            val =>
+              val
+                .trim()
+                .length > 0 &&
+              val.length <= 60
+        },
+
+        description: {
+          id: 'skillDesc',
+          group: 'group-desc',
+          validate:
+            val =>
+              val
+                .trim()
+                .length > 0 &&
+              val.length <= 160
+        },
+
+        price: {
+          id: 'price',
+          group: 'group-price',
+          validate:
+            val =>
+              val
+                .trim()
+                .length > 0
+        },
+
+        phone: {
+          id: 'phone',
+          group: 'group-phone',
+          validate:
+            val => {
+
+              const digits =
+                val.replace(
+                  /\D/g,
+                  ''
+                );
+
+              return (
+                /^\d{7,15}$/.test(
+                  digits
+                )
+              );
+            }
+        }
+      };
+
+      let isValid =
+        true;
+
+      const formData = {};
+
+      Object.keys(fields)
+        .forEach(key => {
+
+          const field =
+            fields[key];
+
+          const input =
+            document.getElementById(
+              field.id
+            );
+
+          const group =
+            document.getElementById(
+              field.group
+            );
+
+          if (
+            !input ||
+            !group
+          ) {
+            isValid = false;
+            return;
+          }
+
+          const val =
+            input.value;
+
+          if (
+            !field.validate(val)
+          ) {
+
+            group.classList.add(
+              'has-error'
+            );
+
+            isValid = false;
+
+          } else {
+
+            group.classList.remove(
+              'has-error'
+            );
+
+            formData[key] =
+              val.trim();
+          }
+        });
+
+      const imageInput =
+        document.getElementById(
+          'skillImage'
+        );
+
+      const imageFile =
+        imageInput?.files?.[0];
+
+      let publicImageUrl =
+        null;
+
+      let uploadedFilePath =
+        null;
+
+      if (imageFile) {
+
+        const validTypes = [
+          'image/png',
+          'image/jpeg',
+          'image/webp'
+        ];
+
+        if (
+          !validTypes.includes(
+            imageFile.type
+          )
+        ) {
+
+          document
+            .getElementById(
+              'group-image'
+            )
+            .classList.add(
+              'has-error'
+            );
+
+          alert(
+            'Image must be JPEG, PNG, or WEBP.'
+          );
+
+          return;
+        }
+
+        if (
+          imageFile.size >
+          3 * 1024 * 1024
+        ) {
+
+          document
+            .getElementById(
+              'group-image'
+            )
+            .classList.add(
+              'has-error'
+            );
+
+          alert(
+            'Image must be under 3MB.'
+          );
+
+          return;
+        }
+
+        document
+          .getElementById(
+            'group-image'
+          )
+          .classList.remove(
+            'has-error'
+          );
+      }
+
+      if (!isValid) {
+        return;
+      }
+
+      const submitBtn =
+        document.getElementById(
+          'submitBtn'
+        );
+
+      submitBtn.disabled =
+        true;
+
+      submitBtn.innerText =
+        'Publishing...';
+
+      try {
+
+        /*
+          IMAGE UPLOAD
+        */
+
+        if (imageFile) {
+
+          let fileExt = 'webp';
+
+          if (
+            imageFile.type ===
+            'image/jpeg'
+          ) {
+            fileExt = 'jpg';
+          }
+
+          if (
+            imageFile.type ===
+            'image/png'
+          ) {
+            fileExt = 'png';
+          }
+
+          uploadedFilePath =
+            `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+
+          const {
+            error: uploadError
+          } =
+            await supabaseClient
+              .storage
+              .from(
+                'skill-images'
+              )
+              .upload(
+                uploadedFilePath,
+                imageFile,
+                {
+                  cacheControl:
+                    '3600',
+                  contentType:
+                    imageFile.type,
+                  upsert:
+                    false
+                }
+              );
+
+          if (uploadError) {
+
+            console.error(
+              'Upload error:',
+              uploadError
+            );
+
+            if (
+              isJwtError(
+                uploadError
+              )
+            ) {
+
+              alert(
+                'Your session has expired. Please sign in again.'
+              );
+
+              await purgeStaleSession();
+
+              closePostModal();
+
+              openAuthModal();
+
+              return;
+            }
+
+            alert(
+              'Failed to upload image: ' +
+              uploadError.message
+            );
+
+            return;
+          }
+
+          const {
+            data: urlData
+          } =
+            supabaseClient
+              .storage
+              .from(
+                'skill-images'
+              )
+              .getPublicUrl(
+                uploadedFilePath
+              );
+
+          publicImageUrl =
+            urlData?.publicUrl ||
+            null;
+        }
+
+        /*
+          DATABASE INSERT
+        */
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from('skills')
+            .insert([
+              {
+                name:
+                  formData.name,
+
+                meta:
+                  formData.meta,
+
+                category:
+                  formData.category,
+
+                title:
+                  formData.title,
+
+                description:
+                  formData.description,
+
+                price:
+                  formData.price,
+
+                phone:
+                  formData.phone.replace(
+                    /\D/g,
+                    ''
+                  ),
+
+                user_id:
+                  currentUser.id,
+
+                image_url:
+                  publicImageUrl
+              }
+            ]);
+
+        if (error) {
+
+          console.error(
+            'Listing insert error:',
+            error
+          );
+
+          /*
+            Remove uploaded image if DB insert failed,
+            preventing orphaned files.
+          */
+
+          if (
+            uploadedFilePath
+          ) {
+
+            try {
+
+              await supabaseClient
+                .storage
+                .from(
+                  'skill-images'
+                )
+                .remove([
+                  uploadedFilePath
+                ]);
+
+            } catch (
+              cleanupError
+            ) {
+
+              console.warn(
+                'Image cleanup failed:',
+                cleanupError
+              );
+            }
+          }
+
+          if (
+            isJwtError(
+              error
+            )
+          ) {
+
+            alert(
+              'Your session has expired. Please sign in again.'
+            );
+
+            await purgeStaleSession();
+
+            closePostModal();
+
+            openAuthModal();
+
+            return;
+          }
+
+          alert(
+            'Failed to submit listing: ' +
+            error.message
+          );
+
+          return;
+        }
+
+        await renderGrid();
+
+        closePostModal();
+
+      } catch (error) {
+
         console.error(
-          'Skill insert failed:',
-          insertError
+          'Unexpected submit error:',
+          error
         );
 
         /*
-          If the database insert fails after the image upload,
-          remove the orphaned image.
+          Cleanup any image uploaded before an unexpected error.
         */
-        if (uploadedFilePath) {
+
+        if (
+          uploadedFilePath
+        ) {
+
           try {
-            await supabaseClient.storage
-              .from('skill-images')
+
+            await supabaseClient
+              .storage
+              .from(
+                'skill-images'
+              )
               .remove([
                 uploadedFilePath
               ]);
-          } catch (cleanupError) {
+
+          } catch (
+            cleanupError
+          ) {
+
             console.warn(
-              'Image cleanup failed:',
+              'Cleanup error:',
               cleanupError
             );
           }
         }
 
-        if (isAuthError(insertError)) {
-          await safelyClearSession();
+        alert(
+          'Something went wrong while publishing. Please try again.'
+        );
 
-          showStatus(
-            'Your session expired. Please sign in again.',
-            'error'
+      } finally {
+
+        submitBtn.disabled =
+          false;
+
+        submitBtn.innerText =
+          'Publish Skill Listing';
+      }
+    }
+
+    /* =====================================================
+       CATEGORY
+       ===================================================== */
+
+    function filterCategory(
+      cat,
+      btn
+    ) {
+
+      currentFilter =
+        cat;
+
+      document
+        .querySelectorAll(
+          '.filter-btn'
+        )
+        .forEach(
+          b =>
+            b.classList.remove(
+              'active'
+            )
+        );
+
+      btn.classList.add(
+        'active'
+      );
+
+      renderGrid();
+    }
+
+    /* =====================================================
+       MODAL CLOSE
+       ===================================================== */
+
+    function closePostModal() {
+
+      document
+        .getElementById(
+          'postModal'
+        )
+        .classList.remove(
+          'active'
+        );
+
+      document
+        .getElementById(
+          'skillForm'
+        )
+        .reset();
+
+      document
+        .querySelectorAll(
+          '#skillForm .has-error'
+        )
+        .forEach(
+          group =>
+            group.classList.remove(
+              'has-error'
+            )
+        );
+    }
+
+    /* =====================================================
+       CONTACT MODAL
+       ===================================================== */
+
+    async function openContactModal(
+      skillId,
+      name
+    ) {
+
+      const modalName =
+        document.getElementById(
+          'modalName'
+        );
+
+      const whatsappLink =
+        document.getElementById(
+          'whatsappLink'
+        );
+
+      modalName.innerText =
+        'Connect with ' +
+        (name || 'Creator');
+
+      whatsappLink.innerText =
+        'Securing phone number...';
+
+      whatsappLink.removeAttribute(
+        'href'
+      );
+
+      whatsappLink.style.pointerEvents =
+        'none';
+
+      document
+        .getElementById(
+          'contactModal'
+        )
+        .classList.add(
+          'active'
+        );
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.rpc(
+            'get_skill_phone',
+            {
+              skill_id:
+                skillId
+            }
           );
 
-          closePostModal();
-          openAuthModal();
+        if (
+          error
+        ) {
+
+          console.error(
+            'Phone RPC error:',
+            error
+          );
+
+          if (
+            isJwtError(error)
+          ) {
+            await purgeStaleSession();
+          }
+
+          whatsappLink.innerText =
+            'Error fetching contact details';
 
           return;
         }
 
-        showStatus(
-          'We could not publish your listing. Please check the form and try again.',
-          'error'
-        );
+        let row =
+          null;
 
-        return;
-      }
+        if (
+          Array.isArray(
+            data
+          )
+        ) {
+          row =
+            data[0] || null;
+        } else {
+          row = data;
+        }
 
-      closePostModal();
+        if (
+          !row ||
+          !row.phone
+        ) {
 
-      showStatus(
-        'Your skill has been published!',
-        'success'
-      );
+          whatsappLink.innerText =
+            'Phone number unavailable';
 
-      await renderGrid();
+          return;
+        }
 
-    } catch (error) {
-      console.error(
-        'Unexpected skill submission error:',
-        error
-      );
-
-      /*
-        Cleanup orphaned image if something unexpected
-        happened after upload.
-      */
-      if (uploadedFilePath) {
-        try {
-          await supabaseClient.storage
-            .from('skill-images')
-            .remove([
-              uploadedFilePath
-            ]);
-        } catch (cleanupError) {
-          console.warn(
-            'Unexpected cleanup failure:',
-            cleanupError
+        const cleanPhone =
+          String(
+            row.phone
+          ).replace(
+            /\D/g,
+            ''
           );
+
+        if (
+          !cleanPhone
+        ) {
+
+          whatsappLink.innerText =
+            'Phone number unavailable';
+
+          return;
         }
-      }
 
-      showStatus(
-        'Something went wrong while publishing. Please try again.',
-        'error'
-      );
+        whatsappLink.href =
+          `https://wa.me/${cleanPhone}`;
 
-    } finally {
-      setButtonLoading(
-        submitButton,
-        false,
-        'Publishing...',
-        'Publish Skill Listing'
-      );
-    }
-  }
+        whatsappLink.innerText =
+          'Open in WhatsApp';
 
-  /* =========================================================
-     CATEGORY FILTER
-     ========================================================= */
+        whatsappLink.style.pointerEvents =
+          'auto';
 
-  function filterCategory(cat, btn) {
-    currentFilter = cat;
+      } catch (error) {
 
-    document
-      .querySelectorAll('.filter-btn')
-      .forEach(button => {
-        button.classList.remove('active');
-      });
-
-    btn?.classList.add('active');
-
-    renderGrid();
-  }
-
-  /* =========================================================
-     CONTACT / PHONE
-     ========================================================= */
-
-  async function openContactModal(skillId, name) {
-    const modalName =
-      $('modalName');
-
-    const whatsappLink =
-      $('whatsappLink');
-
-    if (!modalName || !whatsappLink) {
-      return;
-    }
-
-    modalName.innerText =
-      `Connect with ${name || 'Creator'}`;
-
-    whatsappLink.innerText =
-      'Securing phone number...';
-
-    whatsappLink.removeAttribute('href');
-
-    whatsappLink.style.pointerEvents =
-      'none';
-
-    $('contactModal')?.classList.add(
-      'active'
-    );
-
-    try {
-      const {
-        data,
-        error
-      } = await supabaseClient.rpc(
-        'get_skill_phone',
-        {
-          skill_id: skillId
-        }
-      );
-
-      if (error) {
         console.error(
-          'Phone RPC failed:',
+          'Unexpected contact error:',
           error
         );
 
-        if (isAuthError(error)) {
-          await safelyClearSession();
-        }
-
         whatsappLink.innerText =
-          'Contact temporarily unavailable';
-
-        return;
+          'Contact details unavailable';
       }
-
-      const row =
-        Array.isArray(data)
-          ? data[0]
-          : data;
-
-      const rawPhone =
-        row?.phone || '';
-
-      const cleanPhone =
-        String(rawPhone)
-          .replace(/\D/g, '');
-
-      if (
-        !cleanPhone ||
-        cleanPhone.length < 7
-      ) {
-        whatsappLink.innerText =
-          'Phone number unavailable';
-
-        return;
-      }
-
-      whatsappLink.href =
-        `https://wa.me/${cleanPhone}`;
-
-      whatsappLink.target =
-        '_blank';
-
-      whatsappLink.rel =
-        'noopener noreferrer';
-
-      whatsappLink.innerText =
-        'Open in WhatsApp';
-
-      whatsappLink.style.pointerEvents =
-        'auto';
-
-    } catch (error) {
-      console.error(
-        'Unexpected contact error:',
-        error
-      );
-
-      whatsappLink.innerText =
-        'Contact temporarily unavailable';
     }
-  }
 
-  function closeContactModal() {
-    $('contactModal')?.classList.remove(
-      'active'
-    );
-  }
+    function closeContactModal() {
 
-  /* =========================================================
-     MODAL CLICK-OUTSIDE SUPPORT
-     ========================================================= */
-
-  document.addEventListener(
-    'click',
-    event => {
-      const modals = [
-        'authModal',
-        'postModal',
-        'contactModal'
-      ];
-
-      modals.forEach(id => {
-        const modal = $(id);
-
-        if (
-          modal &&
-          event.target === modal
-        ) {
-          modal.classList.remove(
-            'active'
-          );
-        }
-      });
-    }
-  );
-
-  /* =========================================================
-     ESCAPE KEY
-     ========================================================= */
-
-  document.addEventListener(
-    'keydown',
-    event => {
-      if (event.key !== 'Escape') return;
-
-      [
-        'authModal',
-        'postModal',
-        'contactModal'
-      ].forEach(id => {
-        $(id)?.classList.remove(
+      document
+        .getElementById(
+          'contactModal'
+        )
+        .classList.remove(
           'active'
         );
-      });
     }
-  );
 
-  /* =========================================================
-     AUTH URL CLEANUP
-     ========================================================= */
+    /* =====================================================
+       ESCAPE KEY
+       ===================================================== */
 
-  /*
-    Supabase automatically initializes the session and detects
-    the magic-link callback when detectSessionInUrl is enabled.
-    Once the session has been processed, clean auth query/hash
-    fragments from the visible URL.
-  */
-  function cleanAuthUrl() {
-    try {
-      const url =
-        new URL(window.location.href);
+    document.addEventListener(
+      'keydown',
+      event => {
 
-      const hasAuthParams =
-        url.searchParams.has('code') ||
-        url.searchParams.has('token_hash') ||
-        url.hash.includes('access_token') ||
-        url.hash.includes('refresh_token');
+        if (
+          event.key !==
+          'Escape'
+        ) {
+          return;
+        }
 
-      if (!hasAuthParams) return;
+        document
+          .querySelectorAll(
+            '.modal-overlay'
+          )
+          .forEach(
+            modal =>
+              modal.classList.remove(
+                'active'
+              )
+          );
+      }
+    );
 
-      window.history.replaceState(
-        {},
-        document.title,
-        APP_URL
-      );
-    } catch (error) {
-      console.warn(
-        'Could not clean auth URL:',
-        error
-      );
-    }
-  }
+    /* =====================================================
+       INITIAL LOAD
+       ===================================================== */
 
-  /* =========================================================
-     STARTUP
-     ========================================================= */
+    initializeApp();
+  </script>
 
-  async function initializeApp() {
-    await refreshSessionSafely();
-
-    updateAuthUI();
-
-    /*
-      Give Supabase a moment to finish processing a
-      magic-link callback before rendering.
-    */
-    setTimeout(() => {
-      cleanAuthUrl();
-      renderGrid();
-    }, 250);
-  }
-
-  initializeApp();
-</script>
+</body>
+</html>
+```
