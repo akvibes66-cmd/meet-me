@@ -1,3060 +1,1125 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Meetme by PELQ — Global Skills Marketplace</title>
-
-  <meta
-    name="description"
-    content="Connect directly with skilled creators worldwide with zero platform fees."
-  >
-
-  <meta name="theme-color" content="#FAF7F2">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap"
-    rel="stylesheet"
-  >
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    defer
-  ></script>
-
-  <style>
-    :root {
-      --forest: #1A7A4A;
-      --forest-dark: #125734;
-      --cream: #FAF7F2;
-      --surface: #FFFFFF;
-      --charcoal: #0F1A14;
-      --muted: #5C6B61;
-      --accent: #F5C842;
-      --border: #E8E3DA;
-      --error: #D9383A;
-      --success: #177245;
-
-      --font-serif: "Fraunces", Georgia, serif;
-      --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-      --radius-sm: 8px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-      --pill: 999px;
-
-      --shadow-card: 0 4px 20px rgba(15, 26, 20, 0.05);
-      --shadow-hover: 0 12px 32px rgba(15, 26, 20, 0.12);
-
-      --transition:
-        180ms cubic-bezier(0.16, 1, 0.3, 1);
-
-      --container: 1200px;
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      background: var(--cream);
-      color: var(--charcoal);
-      font-family: var(--font-sans);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
-
-    body.modal-open {
-      overflow: hidden;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button,
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    a {
-      color: inherit;
-    }
-
-    .container {
-      width: min(var(--container), calc(100% - 48px));
-      margin-inline: auto;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    /* --------------------------------------------------
-       NAV
-    -------------------------------------------------- */
-
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 16px 0;
-      background: color-mix(
-        in srgb,
-        var(--cream) 92%,
-        transparent
-      );
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-    }
-
-    .nav-content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      text-decoration: none;
-      color: var(--charcoal);
-    }
-
-    .brand-logo-container {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .brand-logo {
-      font-family: var(--font-serif);
-      font-size: 1.5rem;
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: -0.03em;
-    }
-
-    .brand-byline {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* --------------------------------------------------
-       BUTTONS
-    -------------------------------------------------- */
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 42px;
-      padding: 10px 18px;
-      border-radius: var(--radius-sm);
-      border: 1px solid transparent;
-      font-weight: 650;
-      font-size: 0.92rem;
-      line-height: 1;
-      transition:
-        transform var(--transition),
-        background var(--transition),
-        color var(--transition),
-        border-color var(--transition),
-        box-shadow var(--transition);
-    }
-
-    .btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
-
-    .btn:focus-visible,
-    .filter-btn:focus-visible,
-    .search-input:focus-visible,
-    input:focus-visible,
-    select:focus-visible,
-    textarea:focus-visible,
-    .modal-close-btn:focus-visible {
-      outline: 3px solid rgba(26, 122, 74, 0.22);
-      outline-offset: 2px;
-    }
-
-    .btn-primary {
-      background: var(--forest);
-      color: #fff;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--forest-dark);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--charcoal);
-      border-color: var(--charcoal);
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: var(--charcoal);
-      color: var(--cream);
-    }
-
-    .btn-danger {
-      color: var(--error);
-      border-color: var(--error);
-      background: transparent;
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      color: #fff;
-      background: var(--error);
-    }
-
-    /* --------------------------------------------------
-       HERO
-    -------------------------------------------------- */
-
-    .hero {
-      padding: 64px 0 28px;
-      text-align: center;
-    }
-
-    .hero-title {
-      max-width: 850px;
-      margin: 0 auto 18px;
-      font-family: var(--font-serif);
-      font-size: clamp(2.25rem, 6vw, 4rem);
-      font-weight: 700;
-      line-height: 1.05;
-      letter-spacing: -0.04em;
-    }
-
-    .hero-subtitle {
-      max-width: 620px;
-      margin: 0 auto 32px;
-      color: var(--muted);
-      font-size: clamp(1rem, 2vw, 1.12rem);
-    }
-
-    .search-container {
-      width: min(680px, 100%);
-      margin: 0 auto;
-    }
-
-    .search-input {
-      width: 100%;
-      min-height: 54px;
-      padding: 14px 20px;
-      border: 1px solid var(--border);
-      border-radius: var(--pill);
-      background: var(--surface);
-      color: var(--charcoal);
-      box-shadow: var(--shadow-card);
-      transition:
-        border-color var(--transition),
-        box-shadow var(--transition);
-    }
-
-    .search-input::placeholder {
-      color: #8A948D;
-    }
-
-    .search-input:focus {
-      border-color: var(--forest);
-      box-shadow:
-        0 0 0 4px rgba(26, 122, 74, 0.12),
-        var(--shadow-card);
-      outline: none;
-    }
-
-    /* --------------------------------------------------
-       FILTERS
-    -------------------------------------------------- */
-
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 4px 0 14px;
-      margin-bottom: 30px;
-      scrollbar-width: none;
-    }
-
-    .filters::-webkit-scrollbar {
-      display: none;
-    }
-
-    .filter-btn {
-      flex: 0 0 auto;
-      padding: 9px 17px;
-      border: 1px solid var(--border);
-      border-radius: var(--pill);
-      background: var(--surface);
-      color: var(--charcoal);
-      font-size: 0.88rem;
-      font-weight: 600;
-      white-space: nowrap;
-      transition:
-        background var(--transition),
-        color var(--transition),
-        border-color var(--transition),
-        transform var(--transition);
-    }
-
-    .filter-btn:hover {
-      transform: translateY(-1px);
-      border-color: var(--forest);
-    }
-
-    .filter-btn.active {
-      background: var(--forest);
-      color: #fff;
-      border-color: var(--forest);
-    }
-
-    /* --------------------------------------------------
-       GRID / STATES
-    -------------------------------------------------- */
-
-    .card-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-      padding-bottom: 80px;
-    }
-
-    .state-card {
-      grid-column: 1 / -1;
-      padding: 64px 24px;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-md);
-      background: var(--surface);
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .state-card strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--charcoal);
-      font-family: var(--font-serif);
-      font-size: 1.25rem;
-    }
-
-    .state-card.error strong {
-      color: var(--error);
-    }
-
-    /* --------------------------------------------------
-       SKILL CARD
-    -------------------------------------------------- */
-
-    .skill-card {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background: var(--surface);
-      box-shadow: var(--shadow-card);
-      transition:
-        transform var(--transition),
-        border-color var(--transition),
-        box-shadow var(--transition);
-    }
-
-    .skill-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(26, 122, 74, 0.45);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .skill-card-content {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      padding: 22px;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .avatar {
-      display: grid;
-      flex: 0 0 46px;
-      width: 46px;
-      height: 46px;
-      place-items: center;
-      border-radius: 50%;
-      background: #EEF3EF;
-      color: var(--forest);
-      font-family: var(--font-serif);
-      font-size: 1.15rem;
-      font-weight: 700;
-    }
-
-    .peer-info {
-      min-width: 0;
-    }
-
-    .peer-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-family: var(--font-serif);
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .peer-meta {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
-
-    .skill-image {
-      width: 100%;
-      height: 190px;
-      margin-bottom: 18px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
-      background: #EEF1ED;
-    }
-
-    .skill-title {
-      margin: 0 0 8px;
-      font-size: 1.2rem;
-      font-weight: 750;
-      line-height: 1.3;
-      overflow-wrap: anywhere;
-    }
-
-    .skill-desc {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-      overflow-wrap: anywhere;
-    }
-
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-top: auto;
-      padding-top: 18px;
-    }
-
-    .price-tag {
-      flex: 0 0 auto;
-      color: var(--forest);
-      font-family: var(--font-serif);
-      font-size: 1.15rem;
-      font-weight: 750;
-    }
-
-    .card-actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .card-actions .btn {
-      min-height: 38px;
-      padding: 9px 13px;
-      font-size: 0.82rem;
-    }
-
-    /* --------------------------------------------------
-       FOOTER
-    -------------------------------------------------- */
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 0;
-      color: var(--muted);
-      font-size: 0.84rem;
-      text-align: center;
-    }
-
-    /* --------------------------------------------------
-       MODALS
-    -------------------------------------------------- */
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      background: rgba(15, 26, 20, 0.62);
-      backdrop-filter: blur(6px);
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
-      transition:
-        opacity var(--transition),
-        visibility var(--transition);
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-      visibility: visible;
-    }
-
-    .modal-card {
-      width: min(520px, 100%);
-      max-height: min(90vh, 850px);
-      overflow-y: auto;
-      padding: 30px;
-      border-radius: var(--radius-lg);
-      background: var(--surface);
-      box-shadow: var(--shadow-hover);
-      transform: translateY(12px) scale(0.985);
-      transition: transform var(--transition);
-    }
-
-    .modal-overlay.active .modal-card {
-      transform: translateY(0) scale(1);
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 22px;
-    }
-
-    .modal-header h2,
-    .contact-title {
-      margin: 0;
-      font-family: var(--font-serif);
-      font-size: 1.55rem;
-      line-height: 1.15;
-    }
-
-    .modal-close-btn {
-      display: grid;
-      width: 40px;
-      height: 40px;
-      flex: 0 0 40px;
-      place-items: center;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      background: transparent;
-      color: var(--muted);
-      font-size: 1.2rem;
-      transition:
-        background var(--transition),
-        color var(--transition);
-    }
-
-    .modal-close-btn:hover {
-      background: var(--cream);
-      color: var(--charcoal);
-    }
-
-    /* --------------------------------------------------
-       FORMS
-    -------------------------------------------------- */
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 7px;
-      color: var(--charcoal);
-      font-size: 0.84rem;
-      font-weight: 700;
-    }
-
-    .field {
-      width: 100%;
-      min-height: 44px;
-      padding: 10px 13px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      color: var(--charcoal);
-      transition:
-        border-color var(--transition),
-        box-shadow var(--transition);
-    }
-
-    textarea.field {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .field:focus {
-      border-color: var(--forest);
-      box-shadow: 0 0 0 4px rgba(26, 122, 74, 0.1);
-      outline: none;
-    }
-
-    .field::file-selector-button {
-      margin-right: 12px;
-      padding: 7px 10px;
-      border: 0;
-      border-radius: 6px;
-      background: var(--cream);
-      color: var(--charcoal);
-      font: inherit;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .field-error {
-      display: none;
-      margin-top: 5px;
-      color: var(--error);
-      font-size: 0.75rem;
-    }
-
-    .form-group.has-error .field {
-      border-color: var(--error);
-    }
-
-    .form-group.has-error .field-error {
-      display: block;
-    }
-
-    .submit-btn {
-      width: 100%;
-      margin-top: 8px;
-    }
-
-    /* --------------------------------------------------
-       CONTACT
-    -------------------------------------------------- */
-
-    .contact-modal-body {
-      text-align: center;
-    }
-
-    .contact-description {
-      margin: 10px 0 24px;
-      color: var(--muted);
-    }
-
-    .contact-links {
-      display: grid;
-      gap: 10px;
-    }
-
-    .contact-btn {
-      display: flex;
-      min-height: 48px;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      border-radius: var(--radius-sm);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .btn-whatsapp {
-      background: #25D366;
-      color: #fff;
-    }
-
-    .btn-whatsapp.disabled {
-      pointer-events: none;
-      opacity: 0.65;
-    }
-
-    .btn-modal-close {
-      border: 1px solid var(--border);
-      background: var(--cream);
-      color: var(--charcoal);
-    }
-
-    /* --------------------------------------------------
-       MOBILE
-    -------------------------------------------------- */
-
-    @media (max-width: 700px) {
-      .container {
-        width: min(var(--container), calc(100% - 32px));
-      }
-
-      .navbar {
-        padding: 12px 0;
-      }
-
-      .nav-content {
-        gap: 12px;
-      }
-
-      .nav-actions {
-        gap: 7px;
-      }
-
-      .nav-actions .btn {
-        padding: 9px 11px;
-        font-size: 0.8rem;
-      }
-
-      .hero {
-        padding-top: 44px;
-      }
-
-      .hero-title {
-        font-size: clamp(2rem, 11vw, 3rem);
-      }
-
-      .filters {
-        justify-content: flex-start;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .card-footer {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .card-actions {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .modal-card {
-        padding: 22px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meetme by PELQ — Global Skills Marketplace</title>
+<meta name="description" content="Connect directly with skilled creators worldwide.">
+<meta name="theme-color" content="#FAF7F2">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;700&display=swap" rel="stylesheet">
+
+<!-- Deliberately NOT deferred: the app uses window.supabase below. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --forest:#1A7A4A;
+  --forest-dark:#125734;
+  --cream:#FAF7F2;
+  --surface:#fff;
+  --ink:#0F1A14;
+  --muted:#667169;
+  --border:#E8E3DA;
+  --error:#C62828;
+  --whatsapp:#25D366;
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"DM Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --r1:10px;
+  --r2:18px;
+  --r3:24px;
+  --pill:999px;
+  --shadow:0 5px 22px rgba(15,26,20,.06);
+  --shadow2:0 16px 42px rgba(15,26,20,.12);
+  --max:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.6}
+a{color:inherit}
+.container{width:min(var(--max),calc(100% - 40px));margin:auto}
+.sr{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+
+.nav{position:sticky;top:0;z-index:20;padding:14px 0;border-bottom:1px solid var(--border);background:rgba(250,247,242,.92);backdrop-filter:blur(12px)}
+.nav-inner{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{text-decoration:none}
+.brand-main{display:block;font:700 1.5rem/1 var(--serif);letter-spacing:-.03em}
+.brand-sub{display:block;margin-top:3px;color:var(--muted);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.actions{display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 16px;border:1px solid transparent;border-radius:var(--r1);font-size:.9rem;font-weight:700;transition:.18s ease}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:focus-visible,.filter:focus-visible,.search:focus-visible,.field:focus-visible,.close:focus-visible{outline:3px solid rgba(26,122,74,.2);outline-offset:2px}
+.primary{background:var(--forest);color:#fff}
+.primary:hover:not(:disabled){background:var(--forest-dark)}
+.secondary{background:transparent;color:var(--ink);border-color:var(--ink)}
+.secondary:hover:not(:disabled){background:var(--ink);color:#fff}
+.danger{background:transparent;color:var(--error);border-color:var(--error)}
+.danger:hover:not(:disabled){background:var(--error);color:#fff}
+
+.hero{text-align:center;padding:64px 0 30px}
+.hero h1{max-width:820px;margin:0 auto 18px;font:700 clamp(2.3rem,6vw,4rem)/1.03 var(--serif);letter-spacing:-.045em}
+.hero p{max-width:640px;margin:0 auto 30px;color:var(--muted);font-size:1.05rem}
+.search-wrap{width:min(700px,100%);margin:auto}
+.search{width:100%;min-height:56px;padding:14px 20px;border:1px solid var(--border);border-radius:var(--pill);background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.search::placeholder{color:#8b938e}
+
+.filters{display:flex;justify-content:center;gap:9px;overflow-x:auto;padding:4px 0 16px;margin-bottom:20px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{flex:0 0 auto;padding:9px 15px;border:1px solid var(--border);border-radius:var(--pill);background:#fff;color:var(--ink);font-size:.84rem;font-weight:700}
+.filter:hover{border-color:var(--forest)}
+.filter.active{background:var(--forest);border-color:var(--forest);color:#fff}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;padding-bottom:80px}
+.state{grid-column:1/-1;padding:64px 24px;border:1px dashed var(--border);border-radius:var(--r2);background:#fff;text-align:center;color:var(--muted)}
+.state strong{display:block;margin-bottom:4px;font:700 1.25rem var(--serif);color:var(--ink)}
+.state.error strong{color:var(--error)}
+
+.card{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);border-radius:var(--r2);background:#fff;box-shadow:var(--shadow);transition:.18s ease}
+.card:hover{transform:translateY(-4px);border-color:rgba(26,122,74,.4);box-shadow:var(--shadow2)}
+.card-body{display:flex;flex:1;flex-direction:column;padding:21px}
+.creator{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.avatar{display:grid;flex:0 0 46px;width:46px;height:46px;place-items:center;border-radius:50%;background:#EEF3EF;color:var(--forest);font:700 1.1rem var(--serif)}
+.creator-info{min-width:0}
+.creator-name,.creator-meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.creator-name{font:700 1.04rem var(--serif)}
+.creator-meta{color:var(--muted);font-size:.8rem}
+.card img{width:100%;height:190px;margin-bottom:17px;border-radius:var(--r1);object-fit:cover;background:#EEF1ED}
+.card h2{margin:0 0 8px;font-size:1.18rem;line-height:1.3;overflow-wrap:anywhere}
+.card p{margin:0;color:var(--muted);font-size:.91rem;line-height:1.6;overflow-wrap:anywhere}
+.footer{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:auto;padding-top:18px}
+.price{flex:0 0 auto;color:var(--forest);font:700 1.15rem var(--serif)}
+.card-actions{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.card-actions .btn{min-height:38px;padding:8px 12px;font-size:.8rem}
+
+footer{padding:24px 0;border-top:1px solid var(--border);color:var(--muted);font-size:.82rem;text-align:center}
+
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(15,26,20,.62);backdrop-filter:blur(6px);opacity:0;visibility:hidden;pointer-events:none;transition:.18s ease}
+.modal.open{opacity:1;visibility:visible;pointer-events:auto}
+.modal-card{width:min(540px,100%);max-height:90vh;overflow:auto;padding:28px;border-radius:var(--r3);background:#fff;box-shadow:var(--shadow2);transform:translateY(10px) scale(.985);transition:.18s ease}
+.modal.open .modal-card{transform:none}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.modal-title{margin:0;font:700 1.55rem/1.12 var(--serif)}
+.close{display:grid;width:40px;height:40px;place-items:center;border:1px solid var(--border);border-radius:50%;background:transparent;color:var(--muted);font-size:1.25rem}
+.close:hover{background:var(--cream);color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.group{margin-bottom:15px}
+.label{display:block;margin-bottom:7px;font-size:.83rem;font-weight:700}
+.field{width:100%;min-height:44px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r1);background:#fff;color:var(--ink)}
+textarea.field{min-height:105px;resize:vertical}
+.field::file-selector-button{margin-right:10px;padding:7px 10px;border:0;border-radius:7px;background:var(--cream);font:inherit;font-weight:700;cursor:pointer}
+.group.error .field{border-color:var(--error)}
+.field-error{display:none;margin-top:5px;color:var(--error);font-size:.73rem}
+.group.error .field-error{display:block}
+.full{width:100%;margin-top:6px}
+
+.contact-copy{margin:8px 0 22px;color:var(--muted);text-align:center}
+.contact-actions{display:grid;gap:10px}
+.contact{display:flex;min-height:48px;align-items:center;justify-content:center;border-radius:var(--r1);font-weight:700;text-decoration:none}
+.whatsapp{background:var(--whatsapp);color:#fff}
+.modal-close-action{border:1px solid var(--border);background:var(--cream);color:var(--ink)}
+
+.toast-wrap{position:fixed;right:16px;bottom:16px;z-index:100;width:min(380px,calc(100% - 32px));display:grid;gap:8px}
+.toast{padding:13px 15px;border:1px solid var(--border);border-radius:12px;background:#fff;box-shadow:var(--shadow2);font-size:.86rem}
+.toast.error{border-color:rgba(198,40,40,.28)}
+.toast.success{border-color:rgba(23,114,69,.28)}
+
+@media(max-width:700px){
+  .container{width:min(var(--max),calc(100% - 28px))}
+  .nav{padding:11px 0}
+  .actions{gap:6px}
+  .actions .btn{padding:9px 11px;font-size:.78rem}
+  .hero{padding-top:46px}
+  .hero h1{font-size:clamp(2rem,11vw,3rem)}
+  .filters{justify-content:flex-start}
+  .row{grid-template-columns:1fr}
+  .footer{align-items:flex-start;flex-direction:column}
+  .card-actions{width:100%;justify-content:flex-start}
+  .modal-card{padding:22px}
+}
+</style>
 </head>
 
 <body>
-
-  <nav class="navbar">
-    <div class="container nav-content">
-      <a
-        href="#"
-        class="brand"
-        aria-label="Meetme home"
-      >
-        <span class="brand-logo-container">
-          <span class="brand-logo">Meetme</span>
-          <span class="brand-byline">by PELQ</span>
-        </span>
-      </a>
-
-      <div class="nav-actions">
-        <button
-          id="authNavBtn"
-          class="btn btn-secondary"
-          type="button"
-        >
-          Sign In
-        </button>
-
-        <button
-          id="postSkillBtn"
-          class="btn btn-primary"
-          type="button"
-        >
-          Post a Skill
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <main class="container">
-
-    <section class="hero">
-      <h1 class="hero-title">
-        Trade skills directly with creators worldwide.
-      </h1>
-
-      <p class="hero-subtitle">
-        Need a quick photo edit, code review, tutoring session,
-        or design work? Connect directly with skilled creators
-        everywhere via Meetme by PELQ.
-      </p>
-
-      <div class="search-container">
-        <label
-          class="sr-only"
-          for="searchInput"
-        >
-          Search skill listings
-        </label>
-
-        <input
-          id="searchInput"
-          class="search-input"
-          type="search"
-          maxlength="100"
-          autocomplete="off"
-          placeholder="Search skills, titles, creators, or locations..."
-        >
-      </div>
-    </section>
-
-    <section
-      class="filters"
-      aria-label="Skill categories"
-    >
-      <button
-        type="button"
-        class="filter-btn active"
-        data-category="All"
-      >
-        All Skills
-      </button>
-
-      <button
-        type="button"
-        class="filter-btn"
-        data-category="Photo & Video"
-      >
-        📸 Photo & Video
-      </button>
-
-      <button
-        type="button"
-        class="filter-btn"
-        data-category="Code & Web"
-      >
-        💻 Code & Web
-      </button>
-
-      <button
-        type="button"
-        class="filter-btn"
-        data-category="Tutoring & Notes"
-      >
-        📝 Tutoring & Notes
-      </button>
-
-      <button
-        type="button"
-        class="filter-btn"
-        data-category="Design & Branding"
-      >
-        🎨 Design & Branding
-      </button>
-    </section>
-
-    <section
-      id="cardGrid"
-      class="card-grid"
-      aria-live="polite"
-      aria-busy="true"
-    ></section>
-
-  </main>
-
-  <!-- POST SKILL MODAL -->
-
-  <div
-    id="postModal"
-    class="modal-overlay"
-    aria-hidden="true"
-  >
-    <div
-      class="modal-card"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="postModalTitle"
-    >
-      <div class="modal-header">
-        <h2 id="postModalTitle">
-          Post Your Skill
-        </h2>
-
-        <button
-          type="button"
-          class="modal-close-btn"
-          data-close-modal="postModal"
-          aria-label="Close"
-        >
-          ×
-        </button>
-      </div>
-
-      <form
-        id="skillForm"
-        novalidate
-      >
-
-        <div class="form-row">
-
-          <div
-            class="form-group"
-            data-field-group="fullName"
-          >
-            <label
-              class="form-label"
-              for="fullName"
-            >
-              Full Name
-            </label>
-
-            <input
-              id="fullName"
-              class="field"
-              type="text"
-              maxlength="200"
-              autocomplete="name"
-              placeholder="e.g. Maya Lin"
-            >
-
-            <div class="field-error">
-              Name is required.
-            </div>
-          </div>
-
-          <div
-            class="form-group"
-            data-field-group="meta"
-          >
-            <label
-              class="form-label"
-              for="collegeMeta"
-            >
-              Location / Role
-            </label>
-
-            <input
-              id="collegeMeta"
-              class="field"
-              type="text"
-              maxlength="200"
-              placeholder="e.g. Lagos • Freelance Designer"
-            >
-
-            <div class="field-error">
-              Location / Role is required.
-            </div>
-          </div>
-
-        </div>
-
-        <div
-          class="form-group"
-          data-field-group="category"
-        >
-          <label
-            class="form-label"
-            for="category"
-          >
-            Category
-          </label>
-
-          <select
-            id="category"
-            class="field"
-          >
-            <option value="">
-              Select Category
-            </option>
-
-            <option value="Photo & Video">
-              📸 Photo & Video
-            </option>
-
-            <option value="Code & Web">
-              💻 Code & Web
-            </option>
-
-            <option value="Tutoring & Notes">
-              📝 Tutoring & Notes
-            </option>
-
-            <option value="Design & Branding">
-              🎨 Design & Branding
-            </option>
-          </select>
-
-          <div class="field-error">
-            Please select a category.
-          </div>
-        </div>
-
-        <div
-          class="form-group"
-          data-field-group="title"
-        >
-          <label
-            class="form-label"
-            for="skillTitle"
-          >
-            Skill Title
-          </label>
-
-          <input
-            id="skillTitle"
-            class="field"
-            type="text"
-            maxlength="60"
-            placeholder="e.g. Portrait Color Grading & Edits"
-          >
-
-          <div class="field-error">
-            Title is required and must be 60 characters or fewer.
-          </div>
-        </div>
-
-        <div
-          class="form-group"
-          data-field-group="description"
-        >
-          <label
-            class="form-label"
-            for="skillDesc"
-          >
-            Description
-          </label>
-
-          <textarea
-            id="skillDesc"
-            class="field"
-            rows="4"
-            maxlength="160"
-            placeholder="Describe turnaround time, scope, or deliverables..."
-          ></textarea>
-
-          <div class="field-error">
-            Description is required and must be 160 characters or fewer.
-          </div>
-        </div>
-
-        <div class="form-row">
-
-          <div
-            class="form-group"
-            data-field-group="price"
-          >
-            <label
-              class="form-label"
-              for="price"
-            >
-              Pricing
-            </label>
-
-            <input
-              id="price"
-              class="field"
-              type="text"
-              maxlength="100"
-              placeholder="e.g. $15 or ₦10,000 / set"
-            >
-
-            <div class="field-error">
-              Pricing details are required.
-            </div>
-          </div>
-
-          <div
-            class="form-group"
-            data-field-group="phone"
-          >
-            <label
-              class="form-label"
-              for="phone"
-            >
-              WhatsApp / Phone Number
-            </label>
-
-            <input
-              id="phone"
-              class="field"
-              type="tel"
-              maxlength="30"
-              autocomplete="tel"
-              placeholder="e.g. 2348012345678"
-            >
-
-            <div class="field-error">
-              Enter 7–15 international digits.
-            </div>
-          </div>
-
-        </div>
-
-        <div
-          class="form-group"
-          data-field-group="image"
-        >
-          <label
-            class="form-label"
-            for="skillImage"
-          >
-            Listing Image
-            <span aria-hidden="true">(optional)</span>
-          </label>
-
-          <input
-            id="skillImage"
-            class="field"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-          >
-
-          <div class="field-error">
-            Image must be JPG, PNG, or WEBP and under 3MB.
-          </div>
-        </div>
-
-        <button
-          id="submitBtn"
-          class="btn btn-primary submit-btn"
-          type="submit"
-        >
-          Publish Skill Listing
-        </button>
-      </form>
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#" aria-label="Meetme home">
+      <span class="brand-main">Meetme</span>
+      <span class="brand-sub">by PELQ</span>
+    </a>
+    <div class="actions">
+      <button id="authBtn" class="btn secondary" type="button">Sign In</button>
+      <button id="postBtn" class="btn primary" type="button">Post a Skill</button>
     </div>
   </div>
+</nav>
 
-  <!-- AUTH MODAL -->
+<main class="container">
+  <section class="hero">
+    <h1>Trade skills directly with creators worldwide.</h1>
+    <p>Find the help you need, or put your own skills to work. Connect directly with creators through Meetme by PELQ.</p>
+    <div class="search-wrap">
+      <label class="sr" for="search">Search listings</label>
+      <input id="search" class="search" type="search" maxlength="100" autocomplete="off" placeholder="Search skills, creators, titles, or locations...">
+    </div>
+  </section>
 
-  <div
-    id="authModal"
-    class="modal-overlay"
-    aria-hidden="true"
-  >
-    <div
-      class="modal-card"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="authModalTitle"
-    >
-      <div class="modal-header">
-        <h2 id="authModalTitle">
-          Sign In to Meetme
-        </h2>
+  <section class="filters" aria-label="Skill categories">
+    <button class="filter active" type="button" data-category="All">All Skills</button>
+    <button class="filter" type="button" data-category="Photo & Video">📸 Photo & Video</button>
+    <button class="filter" type="button" data-category="Code & Web">💻 Code & Web</button>
+    <button class="filter" type="button" data-category="Tutoring & Notes">📝 Tutoring & Notes</button>
+    <button class="filter" type="button" data-category="Design & Branding">🎨 Design & Branding</button>
+  </section>
 
-        <button
-          type="button"
-          class="modal-close-btn"
-          data-close-modal="authModal"
-          aria-label="Close"
-        >
-          ×
-        </button>
+  <section id="grid" class="grid" aria-live="polite" aria-busy="true"></section>
+</main>
+
+<footer>
+  <div class="container"><strong>Meetme</strong> — Engineered by <strong>PELQ</strong></div>
+</footer>
+
+<div id="authModal" class="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-head">
+      <h2 id="authTitle" class="modal-title">Sign In to Meetme</h2>
+      <button class="close" type="button" data-close="authModal" aria-label="Close">×</button>
+    </div>
+    <form id="authForm" novalidate>
+      <div class="group">
+        <label class="label" for="email">Email Address</label>
+        <input id="email" class="field" type="email" autocomplete="email" placeholder="you@example.com" required>
+        <div class="field-error">Enter a valid email address.</div>
       </div>
+      <button id="authSubmit" class="btn primary full" type="submit">Send Magic Link</button>
+    </form>
+  </div>
+</div>
 
-      <form id="authForm" novalidate>
+<div id="postModal" class="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="postTitle">
+    <div class="modal-head">
+      <h2 id="postTitle" class="modal-title">Post Your Skill</h2>
+      <button class="close" type="button" data-close="postModal" aria-label="Close">×</button>
+    </div>
 
-        <div class="form-group">
-          <label
-            class="form-label"
-            for="authEmail"
-          >
-            Email Address
-          </label>
-
-          <input
-            id="authEmail"
-            class="field"
-            type="email"
-            required
-            autocomplete="email"
-            placeholder="you@example.com"
-          >
+    <form id="skillForm" novalidate>
+      <div class="row">
+        <div class="group" data-group="name">
+          <label class="label" for="name">Full Name</label>
+          <input id="name" class="field" type="text" maxlength="200" autocomplete="name" placeholder="e.g. Maya Lin">
+          <div class="field-error">Name is required.</div>
         </div>
-
-        <button
-          id="authSubmitBtn"
-          class="btn btn-primary submit-btn"
-          type="submit"
-        >
-          Send Magic Link
-        </button>
-
-      </form>
-    </div>
-  </div>
-
-  <!-- CONTACT MODAL -->
-
-  <div
-    id="contactModal"
-    class="modal-overlay"
-    aria-hidden="true"
-  >
-    <div
-      class="modal-card contact-modal-body"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modalName"
-    >
-
-      <div class="modal-header">
-        <h2
-          id="modalName"
-          class="contact-title"
-        >
-          Connect
-        </h2>
-
-        <button
-          type="button"
-          class="modal-close-btn"
-          data-close-modal="contactModal"
-          aria-label="Close"
-        >
-          ×
-        </button>
+        <div class="group" data-group="meta">
+          <label class="label" for="meta">Location / Role</label>
+          <input id="meta" class="field" type="text" maxlength="200" placeholder="e.g. Lagos • Freelance Designer">
+          <div class="field-error">Location / Role is required.</div>
+        </div>
       </div>
 
-      <p class="contact-description">
-        Arrange the details directly with the creator.
-        There are no platform fees.
-      </p>
-
-      <div class="contact-links">
-
-        <a
-          id="whatsappLink"
-          class="contact-btn btn-whatsapp disabled"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-disabled="true"
-        >
-          Loading contact...
-        </a>
-
-        <button
-          type="button"
-          class="contact-btn btn-modal-close"
-          data-close-modal="contactModal"
-        >
-          Close
-        </button>
-
+      <div class="group" data-group="category">
+        <label class="label" for="category">Category</label>
+        <select id="category" class="field">
+          <option value="">Select Category</option>
+          <option value="Photo & Video">📸 Photo & Video</option>
+          <option value="Code & Web">💻 Code & Web</option>
+          <option value="Tutoring & Notes">📝 Tutoring & Notes</option>
+          <option value="Design & Branding">🎨 Design & Branding</option>
+        </select>
+        <div class="field-error">Choose a category.</div>
       </div>
+
+      <div class="group" data-group="title">
+        <label class="label" for="title">Skill Title</label>
+        <input id="title" class="field" type="text" maxlength="60" placeholder="e.g. Portrait Color Grading & Edits">
+        <div class="field-error">Title is required and must be 60 characters or fewer.</div>
+      </div>
+
+      <div class="group" data-group="description">
+        <label class="label" for="description">Description</label>
+        <textarea id="description" class="field" rows="4" maxlength="160" placeholder="Describe your scope, turnaround time, and deliverables..."></textarea>
+        <div class="field-error">Description is required and must be 160 characters or fewer.</div>
+      </div>
+
+      <div class="row">
+        <div class="group" data-group="price">
+          <label class="label" for="price">Pricing</label>
+          <input id="price" class="field" type="text" maxlength="100" placeholder="e.g. $15 or ₦10,000 / set">
+          <div class="field-error">Pricing is required.</div>
+        </div>
+        <div class="group" data-group="phone">
+          <label class="label" for="phone">WhatsApp / Phone</label>
+          <input id="phone" class="field" type="tel" maxlength="30" autocomplete="tel" placeholder="e.g. 2348012345678">
+          <div class="field-error">Enter 7–15 digits.</div>
+        </div>
+      </div>
+
+      <div class="group" data-group="image">
+        <label class="label" for="image">Listing Image <span aria-hidden="true">(optional)</span></label>
+        <input id="image" class="field" type="file" accept="image/jpeg,image/png,image/webp">
+        <div class="field-error">Use JPG, PNG, or WEBP under 3MB.</div>
+      </div>
+
+      <button id="publish" class="btn primary full" type="submit">Publish Skill Listing</button>
+    </form>
+  </div>
+</div>
+
+<div id="contactModal" class="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+    <div class="modal-head">
+      <h2 id="contactTitle" class="modal-title">Connect</h2>
+      <button class="close" type="button" data-close="contactModal" aria-label="Close">×</button>
+    </div>
+    <p id="contactText" class="contact-copy">Fetching contact details...</p>
+    <div class="contact-actions">
+      <a id="whatsapp" class="contact whatsapp" href="#" target="_blank" rel="noopener noreferrer" hidden>Open in WhatsApp</a>
+      <button class="contact modal-close-action" type="button" data-close="contactModal">Close</button>
     </div>
   </div>
+</div>
 
-  <footer>
-    <div class="container">
-      <p>
-        <strong>Meetme</strong>
-        — Engineered by
-        <strong>PELQ</strong>
-      </p>
-    </div>
-  </footer>
+<div id="toasts" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
 
-  <script>
-    "use strict";
+<script>
+"use strict";
 
-    /*
-      ==========================================================
-      CONFIG
-      ==========================================================
-    */
+/* =========================
+   CONFIG
+========================= */
 
-    const SUPABASE_URL =
-      "https://exeqybodcbletjcdhjfw.supabase.co";
+const SUPABASE_URL = "https://exeqybodcbletjcdhjfw.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg";
+const IMAGE_BUCKET = "skill-images";
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
+const IMAGE_TYPES = new Set(["image/jpeg","image/png","image/webp"]);
 
-    const SUPABASE_ANON_KEY =
-      "sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg";
+/*
+  The most important reliability decision:
+  the CDN script above is synchronous, so this guard should
+  catch a CDN problem immediately instead of failing deep
+  inside the app.
+*/
+if (!window.supabase || typeof window.supabase.createClient !== "function") {
+  document.body.innerHTML = `
+    <main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#FAF7F2;color:#0F1A14;font-family:system-ui;text-align:center">
+      <div style="max-width:560px">
+        <h1>Meetme couldn't start.</h1>
+        <p>Supabase did not load. Check your connection and refresh the page.</p>
+      </div>
+    </main>`;
+  throw new Error("Supabase client library failed to load.");
+}
 
-    const IMAGE_BUCKET =
-      "skill-images";
-
-    const MAX_IMAGE_SIZE =
-      3 * 1024 * 1024;
-
-    const ALLOWED_IMAGE_TYPES = new Set([
-      "image/jpeg",
-      "image/png",
-      "image/webp"
-    ]);
-
-    /*
-      ==========================================================
-      STATE
-      ==========================================================
-    */
-
-    const state = {
-      currentUser: null,
-      currentFilter: "All",
-      searchQuery: "",
-      skills: [],
-      isLoadingSkills: false,
-      renderVersion: 0,
-      activeModalId: null,
-      lastFocusedElement: null,
-      searchTimer: null
-    };
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
-        {
-          auth: {
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true
-          }
-        }
-      );
-
-    /*
-      ==========================================================
-      DOM
-      ==========================================================
-    */
-
-    const dom = {
-      grid:
-        document.getElementById("cardGrid"),
-
-      authNavBtn:
-        document.getElementById("authNavBtn"),
-
-      postSkillBtn:
-        document.getElementById("postSkillBtn"),
-
-      searchInput:
-        document.getElementById("searchInput"),
-
-      authForm:
-        document.getElementById("authForm"),
-
-      authEmail:
-        document.getElementById("authEmail"),
-
-      authSubmitBtn:
-        document.getElementById("authSubmitBtn"),
-
-      skillForm:
-        document.getElementById("skillForm"),
-
-      submitBtn:
-        document.getElementById("submitBtn"),
-
-      imageInput:
-        document.getElementById("skillImage"),
-
-      modalName:
-        document.getElementById("modalName"),
-
-      whatsappLink:
-        document.getElementById("whatsappLink")
-    };
-
-    /*
-      ==========================================================
-      UTILITIES
-      ==========================================================
-    */
-
-    function normalizeText(value) {
-      return String(value ?? "")
-        .trim()
-        .toLowerCase();
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
     }
+  }
+);
 
-    function cleanPhone(value) {
-      return String(value ?? "")
-        .replace(/\D/g, "");
-    }
+/* =========================
+   STATE + DOM
+========================= */
 
-    function isValidPhone(value) {
-      return /^\d{7,15}$/.test(
-        cleanPhone(value)
-      );
-    }
+const state = {
+  user: null,
+  skills: [],
+  category: "All",
+  search: "",
+  requestId: 0,
+  modalId: null,
+  focusedBeforeModal: null,
+  searchTimer: null
+};
 
-    function getInitial(name) {
-      const value =
-        String(name ?? "")
-          .trim();
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-      return value
-        ? value.charAt(0).toUpperCase()
-        : "?";
-    }
+const dom = {
+  authBtn: $("#authBtn"),
+  postBtn: $("#postBtn"),
+  search: $("#search"),
+  grid: $("#grid"),
 
-    function getFirstName(name) {
-      const value =
-        String(name ?? "")
-          .trim();
+  authModal: $("#authModal"),
+  authForm: $("#authForm"),
+  email: $("#email"),
+  authSubmit: $("#authSubmit"),
 
-      return value
-        ? value.split(/\s+/)[0]
-        : "Creator";
-    }
+  postModal: $("#postModal"),
+  skillForm: $("#skillForm"),
+  publish: $("#publish"),
+  name: $("#name"),
+  meta: $("#meta"),
+  category: $("#category"),
+  title: $("#title"),
+  description: $("#description"),
+  price: $("#price"),
+  phone: $("#phone"),
+  image: $("#image"),
 
-    function isJwtError(error) {
-      if (!error) {
-        return false;
+  contactModal: $("#contactModal"),
+  contactTitle: $("#contactTitle"),
+  contactText: $("#contactText"),
+  whatsapp: $("#whatsapp"),
+
+  toasts: $("#toasts")
+};
+
+/* =========================
+   HELPERS
+========================= */
+
+function cleanPhone(value) {
+  return String(value || "").replace(/\D/g, "");
+}
+
+function validPhone(value) {
+  return /^\d{7,15}$/.test(cleanPhone(value));
+}
+
+function firstName(value) {
+  const text = String(value || "").trim();
+  return text ? text.split(/\s+/)[0] : "Creator";
+}
+
+function initial(value) {
+  const text = String(value || "").trim();
+  return text ? text[0].toUpperCase() : "?";
+}
+
+function authError(error) {
+  if (!error) return false;
+  const msg = String(error.message || "").toLowerCase();
+  return error.status === 401 ||
+    msg.includes("jwt") ||
+    msg.includes("expired") ||
+    msg.includes("refresh token") ||
+    msg.includes("unauthorized");
+}
+
+function notify(message, type = "") {
+  const node = document.createElement("div");
+  node.className = `toast ${type}`.trim();
+  node.textContent = message;
+  dom.toasts.appendChild(node);
+  setTimeout(() => node.remove(), 4200);
+}
+
+function loading(button, yes, text) {
+  if (yes) {
+    button.disabled = true;
+    button.dataset.idle = button.textContent;
+    button.textContent = text;
+  } else {
+    button.disabled = false;
+    button.textContent = button.dataset.idle || button.textContent;
+    delete button.dataset.idle;
+  }
+}
+
+/* =========================
+   MODALS
+========================= */
+
+function openModal(id, focusSelector = null) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+
+  state.modalId = id;
+  state.focusedBeforeModal = document.activeElement;
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("locked");
+
+  if (focusSelector) {
+    requestAnimationFrame(() => $(focusSelector)?.focus());
+  }
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+
+  if (state.modalId === id) state.modalId = null;
+  if (!$(".modal.open")) document.body.classList.remove("locked");
+
+  state.focusedBeforeModal?.focus?.();
+}
+
+/* =========================
+   AUTH
+========================= */
+
+function updateAuthUI() {
+  dom.authBtn.textContent = state.user ? "Sign Out" : "Sign In";
+}
+
+async function getSession() {
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error) throw error;
+  state.user = data?.session?.user || null;
+  updateAuthUI();
+}
+
+async function handleAuthButton() {
+  if (!state.user) {
+    openModal("authModal", "#email");
+    return;
+  }
+
+  loading(dom.authBtn, true, "Signing Out...");
+
+  try {
+    const { error } = await supabaseClient.auth.signOut({ scope: "local" });
+    if (error) throw error;
+
+    state.user = null;
+    updateAuthUI();
+    await loadSkills();
+    notify("You have been signed out.", "success");
+  } catch (error) {
+    console.error(error);
+    notify("Could not sign out.", "error");
+  } finally {
+    loading(dom.authBtn, false);
+  }
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+
+  const email = dom.email.value.trim().toLowerCase();
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  if (!valid) {
+    notify("Enter a valid email address.", "error");
+    dom.email.focus();
+    return;
+  }
+
+  loading(dom.authSubmit, true, "Sending...");
+
+  try {
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: window.location.origin,
+        shouldCreateUser: true
       }
+    });
 
-      const message =
-        String(error.message ?? "")
-          .toLowerCase();
+    if (error) throw error;
 
-      return (
-        error.status === 401 ||
-        message.includes("jwt expired") ||
-        message.includes("invalid jwt") ||
-        message.includes("expired") ||
-        message.includes("unauthorized") ||
-        message.includes("invalid refresh token")
-      );
+    dom.authForm.reset();
+    closeModal("authModal");
+    notify(`Login link sent to ${email}.`, "success");
+  } catch (error) {
+    console.error(error);
+    const msg = String(error?.message || "").toLowerCase();
+
+    if (error?.status === 429 || msg.includes("rate") || msg.includes("too many")) {
+      notify("Please wait before requesting another login link.", "error");
+    } else {
+      notify("Could not send the login link.", "error");
+    }
+  } finally {
+    loading(dom.authSubmit, false);
+  }
+}
+
+/* =========================
+   LISTINGS
+========================= */
+
+async function loadSkills() {
+  const id = ++state.requestId;
+  renderLoading();
+
+  try {
+    let query = supabaseClient
+      .from("skills")
+      .select("id,name,meta,category,title,description,price,user_id,created_at,image_url")
+      .order("created_at", { ascending: false });
+
+    if (state.category !== "All") {
+      query = query.eq("category", state.category);
     }
 
-    function setButtonLoading(
-      button,
-      isLoading,
-      loadingText,
-      idleText
-    ) {
-      button.disabled = isLoading;
-      button.textContent =
-        isLoading
-          ? loadingText
-          : idleText;
-    }
+    const { data, error } = await query;
+    if (id !== state.requestId) return;
+    if (error) throw error;
 
-    function showAlert(message) {
-      /*
-        Replace this later with your own toast component.
-      */
-      window.alert(message);
-    }
+    state.skills = Array.isArray(data) ? data : [];
+    renderGrid();
+  } catch (error) {
+    console.error("Listing load failed:", error);
 
-    /*
-      ==========================================================
-      MODALS
-      ==========================================================
-    */
-
-    function getModal(id) {
-      return document.getElementById(id);
-    }
-
-    function openModal(id, focusSelector = null) {
-      const modal = getModal(id);
-
-      if (!modal) {
-        return;
-      }
-
-      state.lastFocusedElement =
-        document.activeElement;
-
-      state.activeModalId = id;
-
-      modal.classList.add("active");
-      modal.setAttribute("aria-hidden", "false");
-
-      document.body.classList.add("modal-open");
-
-      if (focusSelector) {
-        requestAnimationFrame(() => {
-          document
-            .querySelector(focusSelector)
-            ?.focus();
-        });
-      }
-    }
-
-    function closeModal(id) {
-      const modal = getModal(id);
-
-      if (!modal) {
-        return;
-      }
-
-      modal.classList.remove("active");
-      modal.setAttribute("aria-hidden", "true");
-
-      if (state.activeModalId === id) {
-        state.activeModalId = null;
-      }
-
-      if (
-        !document.querySelector(
-          ".modal-overlay.active"
-        )
-      ) {
-        document.body.classList.remove("modal-open");
-      }
-
-      state.lastFocusedElement
-        ?.focus?.();
-    }
-
-    function closeAllModals() {
-      document
-        .querySelectorAll(".modal-overlay.active")
-        .forEach(modal => {
-          modal.classList.remove("active");
-          modal.setAttribute(
-            "aria-hidden",
-            "true"
-          );
-        });
-
-      state.activeModalId = null;
-
-      document.body.classList.remove("modal-open");
-
-      state.lastFocusedElement
-        ?.focus?.();
-    }
-
-    /*
-      ==========================================================
-      AUTH
-      ==========================================================
-    */
-
-    function updateAuthUI() {
-      if (state.currentUser) {
-        dom.authNavBtn.textContent =
-          "Sign Out";
-        dom.authNavBtn.classList.remove(
-          "btn-secondary"
-        );
-        dom.authNavBtn.classList.add(
-          "btn-secondary"
-        );
-      } else {
-        dom.authNavBtn.textContent =
-          "Sign In";
-      }
-    }
-
-    async function clearLocalSession() {
-      try {
-        await supabaseClient.auth.signOut({
-          scope: "local"
-        });
-      } catch (error) {
-        console.warn(
-          "Could not clear local session:",
-          error
-        );
-      }
-
-      state.currentUser = null;
+    if (authError(error)) {
+      state.user = null;
       updateAuthUI();
     }
 
-    function openAuthModal() {
-      openModal(
-        "authModal",
-        "#authEmail"
-      );
+    if (id === state.requestId) renderError();
+  }
+}
+
+function filteredSkills() {
+  const q = state.search.trim().toLowerCase();
+  if (!q) return state.skills;
+
+  return state.skills.filter(skill =>
+    [
+      skill.name,
+      skill.meta,
+      skill.category,
+      skill.title,
+      skill.description
+    ].filter(Boolean).join(" ").toLowerCase().includes(q)
+  );
+}
+
+function clearGrid() {
+  dom.grid.replaceChildren();
+}
+
+function renderLoading() {
+  clearGrid();
+  const card = document.createElement("div");
+  card.className = "state";
+  card.innerHTML = "<strong>Loading live listings...</strong>";
+  dom.grid.appendChild(card);
+  dom.grid.setAttribute("aria-busy", "true");
+}
+
+function renderError() {
+  clearGrid();
+  const card = document.createElement("div");
+  card.className = "state error";
+  card.innerHTML = "<strong>Couldn't load listings.</strong><span>Refresh the page and try again.</span>";
+  dom.grid.appendChild(card);
+  dom.grid.setAttribute("aria-busy", "false");
+}
+
+function renderEmpty() {
+  clearGrid();
+  const card = document.createElement("div");
+  card.className = "state";
+
+  const title = document.createElement("strong");
+  title.textContent = state.search ? "No matching listings." : "No skill listings yet.";
+
+  const text = document.createElement("span");
+  text.textContent = state.search
+    ? "Try a different search."
+    : "Post the first skill and start the marketplace.";
+
+  card.append(title, text);
+  dom.grid.appendChild(card);
+  dom.grid.setAttribute("aria-busy", "false");
+}
+
+function button(text, cls) {
+  const node = document.createElement("button");
+  node.type = "button";
+  node.className = cls;
+  node.textContent = text;
+  return node;
+}
+
+function createCard(skill) {
+  const article = document.createElement("article");
+  article.className = "card";
+
+  const body = document.createElement("div");
+  body.className = "card-body";
+
+  const creator = document.createElement("div");
+  creator.className = "creator";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = initial(skill.name);
+
+  const info = document.createElement("div");
+  info.className = "creator-info";
+
+  const name = document.createElement("div");
+  name.className = "creator-name";
+  name.textContent = skill.name || "Creator";
+
+  const meta = document.createElement("div");
+  meta.className = "creator-meta";
+  meta.textContent = skill.meta || "";
+
+  info.append(name, meta);
+  creator.append(avatar, info);
+  body.appendChild(creator);
+
+  if (skill.image_url) {
+    const image = document.createElement("img");
+    image.src = skill.image_url;
+    image.alt = `${skill.title || "Skill"} preview`;
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.onerror = () => image.remove();
+    body.appendChild(image);
+  }
+
+  const title = document.createElement("h2");
+  title.textContent = skill.title || "Untitled skill";
+
+  const desc = document.createElement("p");
+  desc.textContent = skill.description || "";
+
+  body.append(title, desc);
+
+  const footer = document.createElement("div");
+  footer.className = "footer";
+
+  const price = document.createElement("span");
+  price.className = "price";
+  price.textContent = skill.price || "Contact for pricing";
+
+  const actions = document.createElement("div");
+  actions.className = "card-actions";
+
+  if (state.user?.id === skill.user_id) {
+    const del = button("Delete", "btn danger");
+    del.dataset.action = "delete";
+    del.dataset.id = String(skill.id);
+    actions.appendChild(del);
+  }
+
+  const message = button(`Message ${firstName(skill.name)}`, "btn primary");
+  message.dataset.action = "contact";
+  message.dataset.id = String(skill.id);
+  message.dataset.name = String(skill.name || "Creator");
+  actions.appendChild(message);
+
+  footer.append(price, actions);
+  body.appendChild(footer);
+  article.appendChild(body);
+
+  return article;
+}
+
+function renderGrid() {
+  const skills = filteredSkills();
+
+  if (!skills.length) {
+    renderEmpty();
+    return;
+  }
+
+  clearGrid();
+
+  const fragment = document.createDocumentFragment();
+  skills.forEach(skill => fragment.appendChild(createCard(skill)));
+
+  dom.grid.appendChild(fragment);
+  dom.grid.setAttribute("aria-busy", "false");
+}
+
+/* =========================
+   SEARCH / FILTER
+========================= */
+
+function handleSearch() {
+  state.search = dom.search.value.slice(0, 100);
+  clearTimeout(state.searchTimer);
+  state.searchTimer = setTimeout(renderGrid, 100);
+}
+
+function handleFilter(buttonNode) {
+  state.category = buttonNode.dataset.category || "All";
+  $$(".filter").forEach(node => node.classList.toggle("active", node === buttonNode));
+  loadSkills();
+}
+
+/* =========================
+   FORM
+========================= */
+
+function clearErrors() {
+  $$(".group.error").forEach(node => node.classList.remove("error"));
+}
+
+function fieldError(name, yes) {
+  $(`[data-group="${name}"]`)?.classList.toggle("error", yes);
+}
+
+function values() {
+  return {
+    name: dom.name.value.trim(),
+    meta: dom.meta.value.trim(),
+    category: dom.category.value,
+    title: dom.title.value.trim(),
+    description: dom.description.value.trim(),
+    price: dom.price.value.trim(),
+    phone: cleanPhone(dom.phone.value)
+  };
+}
+
+function validate(data) {
+  clearErrors();
+
+  const checks = {
+    name: data.name.length > 0,
+    meta: data.meta.length > 0,
+    category: [
+      "Photo & Video",
+      "Code & Web",
+      "Tutoring & Notes",
+      "Design & Branding"
+    ].includes(data.category),
+    title: data.title.length >= 1 && data.title.length <= 60,
+    description: data.description.length >= 1 && data.description.length <= 160,
+    price: data.price.length >= 1 && data.price.length <= 100,
+    phone: validPhone(data.phone)
+  };
+
+  let ok = true;
+
+  for (const [name, valid] of Object.entries(checks)) {
+    if (!valid) {
+      fieldError(name, true);
+      ok = false;
     }
-
-    async function handleAuthClick() {
-      if (!state.currentUser) {
-        openAuthModal();
-        return;
-      }
-
-      setButtonLoading(
-        dom.authNavBtn,
-        true,
-        "Signing Out...",
-        "Sign Out"
-      );
-
-      try {
-        const { error } =
-          await supabaseClient.auth.signOut({
-            scope: "local"
-          });
-
-        if (error) {
-          console.warn(
-            "Sign out warning:",
-            error
-          );
-        }
-      } catch (error) {
-        console.error(
-          "Sign out error:",
-          error
-        );
-      } finally {
-        state.currentUser = null;
-
-        updateAuthUI();
-
-        setButtonLoading(
-          dom.authNavBtn,
-          false,
-          "Signing Out...",
-          "Sign In"
-        );
-
-        await loadSkills();
-      }
-    }
-
-    async function handleAuthSubmit(event) {
-      event.preventDefault();
-
-      const email =
-        dom.authEmail.value
-          .trim()
-          .toLowerCase();
-
-      if (!email) {
-        showAlert(
-          "Please enter your email address."
-        );
-        dom.authEmail.focus();
-        return;
-      }
-
-      setButtonLoading(
-        dom.authSubmitBtn,
-        true,
-        "Sending link...",
-        "Send Magic Link"
-      );
-
-      try {
-        const { error } =
-          await supabaseClient.auth.signInWithOtp({
-            email,
-            options: {
-              /*
-                Use the current origin instead of a hard-coded
-                Netlify production URL.
-              */
-              emailRedirectTo:
-                window.location.origin,
-
-              shouldCreateUser: true
-            }
-          });
-
-        if (error) {
-          console.error(
-            "Magic link error:",
-            error
-          );
-
-          const message =
-            String(error.message ?? "")
-              .toLowerCase();
-
-          if (
-            error.status === 429 ||
-            message.includes("rate") ||
-            message.includes("too many")
-          ) {
-            showAlert(
-              "Please wait before requesting another login link."
-            );
-          } else {
-            showAlert(
-              "Could not send the login link right now. Please try again."
-            );
-          }
-
-          return;
-        }
-
-        showAlert(
-          `Check your inbox. We sent a login link to ${email}.`
-        );
-
-        dom.authForm.reset();
-        closeModal("authModal");
-      } catch (error) {
-        console.error(
-          "Unexpected authentication error:",
-          error
-        );
-
-        showAlert(
-          "Sign-in is temporarily unavailable. Please try again."
-        );
-      } finally {
-        setButtonLoading(
-          dom.authSubmitBtn,
-          false,
-          "Sending link...",
-          "Send Magic Link"
-        );
-      }
-    }
-
-    /*
-      ==========================================================
-      SKILLS — DATA
-      ==========================================================
-    */
-
-    async function fetchSkills() {
-      let query =
-        supabaseClient
-          .from("skills")
-          .select(
-            [
-              "id",
-              "name",
-              "meta",
-              "category",
-              "title",
-              "description",
-              "price",
-              "phone",
-              "user_id",
-              "created_at",
-              "image_url"
-            ].join(", ")
-          )
-          .order(
-            "created_at",
-            {
-              ascending: false
-            }
-          );
-
-      if (
-        state.currentFilter !== "All"
-      ) {
-        query = query.eq(
-          "category",
-          state.currentFilter
-        );
-      }
-
-      const {
-        data,
-        error
-      } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      return Array.isArray(data)
-        ? data
-        : [];
-    }
-
-    function filterSkills(skills) {
-      const query =
-        normalizeText(
-          state.searchQuery
-        );
-
-      if (!query) {
-        return skills;
-      }
-
-      return skills.filter(skill => {
-        const haystack = [
-          skill.name,
-          skill.meta,
-          skill.title,
-          skill.description,
-          skill.category
-        ]
-          .map(normalizeText)
-          .join(" ");
-
-        return haystack.includes(query);
-      });
-    }
-
-    async function loadSkills() {
-      const version =
-        ++state.renderVersion;
-
-      state.isLoadingSkills = true;
-
-      renderLoadingState();
-
-      try {
-        const skills =
-          await fetchSkills();
-
-        /*
-          Ignore an older request if a newer render has
-          already started.
-        */
-        if (
-          version !== state.renderVersion
-        ) {
-          return;
-        }
-
-        state.skills = skills;
-        renderGrid();
-      } catch (error) {
-        console.error(
-          "Error loading skills:",
-          error
-        );
-
-        if (isJwtError(error)) {
-          await clearLocalSession();
-        }
-
-        if (
-          version === state.renderVersion
-        ) {
-          renderErrorState();
-        }
-      } finally {
-        state.isLoadingSkills = false;
-      }
-    }
-
-    /*
-      ==========================================================
-      SKILLS — RENDERING
-      ==========================================================
-    */
-
-    function clearGrid() {
-      dom.grid.replaceChildren();
-    }
-
-    function renderLoadingState() {
-      clearGrid();
-
-      const stateCard =
-        document.createElement("div");
-
-      stateCard.className =
-        "state-card";
-
-      const strong =
-        document.createElement("strong");
-
-      strong.textContent =
-        "Loading live listings...";
-
-      stateCard.appendChild(strong);
-
-      dom.grid.appendChild(
-        stateCard
-      );
-
-      dom.grid.setAttribute(
-        "aria-busy",
-        "true"
-      );
-    }
-
-    function renderErrorState() {
-      clearGrid();
-
-      const stateCard =
-        document.createElement("div");
-
-      stateCard.className =
-        "state-card error";
-
-      const strong =
-        document.createElement("strong");
-
-      strong.textContent =
-        "Could not load listings.";
-
-      const text =
-        document.createElement("span");
-
-      text.textContent =
-        "Please try again.";
-
-      stateCard.append(
-        strong,
-        text
-      );
-
-      dom.grid.appendChild(
-        stateCard
-      );
-
-      dom.grid.setAttribute(
-        "aria-busy",
-        "false"
-      );
-    }
-
-    function renderEmptyState() {
-      clearGrid();
-
-      const stateCard =
-        document.createElement("div");
-
-      stateCard.className =
-        "state-card";
-
-      const strong =
-        document.createElement("strong");
-
-      strong.textContent =
-        state.searchQuery
-          ? "No matching listings."
-          : "No skill listings yet.";
-
-      const text =
-        document.createElement("span");
-
-      text.textContent =
-        state.searchQuery
-          ? "Try a different search."
-          : "Be the first creator to post a skill.";
-
-      stateCard.append(
-        strong,
-        text
-      );
-
-      dom.grid.appendChild(
-        stateCard
-      );
-
-      dom.grid.setAttribute(
-        "aria-busy",
-        "false"
-      );
-    }
-
-    function createElement(
-      tag,
-      className,
-      textContent
-    ) {
-      const element =
-        document.createElement(tag);
-
-      if (className) {
-        element.className =
-          className;
-      }
-
-      if (
-        textContent !== undefined
-      ) {
-        element.textContent =
-          textContent;
-      }
-
-      return element;
-    }
-
-    function createSkillCard(skill) {
-      const card =
-        createElement(
-          "article",
-          "skill-card"
-        );
-
-      const content =
-        createElement(
-          "div",
-          "skill-card-content"
-        );
-
-      const header =
-        createElement(
-          "div",
-          "card-header"
-        );
-
-      const avatar =
-        createElement(
-          "div",
-          "avatar",
-          getInitial(skill.name)
-        );
-
-      const peerInfo =
-        createElement(
-          "div",
-          "peer-info"
-        );
-
-      const peerName =
-        createElement(
-          "div",
-          "peer-name",
-          skill.name || "Creator"
-        );
-
-      const peerMeta =
-        createElement(
-          "div",
-          "peer-meta",
-          skill.meta || ""
-        );
-
-      peerInfo.append(
-        peerName,
-        peerMeta
-      );
-
-      header.append(
-        avatar,
-        peerInfo
-      );
-
-      content.append(
-        header
-      );
-
-      /*
-        IMPORTANT:
-        We assign image.src instead of injecting database
-        data into innerHTML.
-      */
-      if (skill.image_url) {
-        const image =
-          document.createElement("img");
-
-        image.className =
-          "skill-image";
-
-        image.alt =
-          `${skill.title || "Skill"} preview`;
-
-        image.loading =
-          "lazy";
-
-        image.decoding =
-          "async";
-
-        image.src =
-          String(skill.image_url);
-
-        image.addEventListener(
-          "error",
-          () => {
-            image.remove();
-          },
-          { once: true }
-        );
-
-        content.appendChild(image);
-      }
-
-      const title =
-        createElement(
-          "h2",
-          "skill-title",
-          skill.title || "Untitled skill"
-        );
-
-      const description =
-        createElement(
-          "p",
-          "skill-desc",
-          skill.description || ""
-        );
-
-      content.append(
-        title,
-        description
-      );
-
-      const footer =
-        createElement(
-          "div",
-          "card-footer"
-        );
-
-      const price =
-        createElement(
-          "span",
-          "price-tag",
-          skill.price || "Contact for pricing"
-        );
-
-      const actions =
-        createElement(
-          "div",
-          "card-actions"
-        );
-
-      if (
-        state.currentUser &&
-        state.currentUser.id === skill.user_id
-      ) {
-        const deleteButton =
-          createElement(
-            "button",
-            "btn btn-danger",
-            "Delete"
-          );
-
-        deleteButton.type =
-          "button";
-
-        deleteButton.dataset.action =
-          "delete";
-
-        deleteButton.dataset.skillId =
-          String(skill.id);
-
-        actions.appendChild(
-          deleteButton
-        );
-      }
-
-      const contactButton =
-        createElement(
-          "button",
-          "btn btn-primary",
-          `Message ${getFirstName(skill.name)}`
-        );
-
-      contactButton.type =
-        "button";
-
-      contactButton.dataset.action =
-        "contact";
-
-      contactButton.dataset.skillId =
-        String(skill.id);
-
-      contactButton.dataset.creatorName =
-        String(
-          skill.name || "Creator"
-        );
-
-      actions.appendChild(
-        contactButton
-      );
-
-      footer.append(
-        price,
-        actions
-      );
-
-      content.appendChild(footer);
-      card.appendChild(content);
-
-      return card;
-    }
-
-    function renderGrid() {
-      const visibleSkills =
-        filterSkills(
-          state.skills
-        );
-
-      if (
-        !visibleSkills.length
-      ) {
-        renderEmptyState();
-        return;
-      }
-
-      clearGrid();
-
-      const fragment =
-        document.createDocumentFragment();
-
-      for (
-        const skill of visibleSkills
-      ) {
-        fragment.appendChild(
-          createSkillCard(skill)
-        );
-      }
-
-      dom.grid.appendChild(
-        fragment
-      );
-
-      dom.grid.setAttribute(
-        "aria-busy",
-        "false"
-      );
-    }
-
-    /*
-      ==========================================================
-      SEARCH
-      ==========================================================
-    */
-
-    function handleSearch() {
-      state.searchQuery =
-        dom.searchInput.value
-          .slice(0, 100);
-
-      clearTimeout(
-        state.searchTimer
-      );
-
-      state.searchTimer =
-        setTimeout(() => {
-          renderGrid();
-        }, 120);
-    }
-
-    /*
-      ==========================================================
-      CATEGORY
-      ==========================================================
-    */
-
-    function handleCategoryClick(button) {
-      state.currentFilter =
-        button.dataset.category ||
-        "All";
-
-      document
-        .querySelectorAll(".filter-btn")
-        .forEach(filterButton => {
-          filterButton.classList.toggle(
-            "active",
-            filterButton === button
-          );
-        });
-
-      loadSkills();
-    }
-
-    /*
-      ==========================================================
-      POST MODAL
-      ==========================================================
-    */
-
-    function openPostModal() {
-      if (!state.currentUser) {
-        showAlert(
-          "You must be signed in to post a skill."
-        );
-
-        openAuthModal();
-        return;
-      }
-
-      openModal(
-        "postModal",
-        "#fullName"
-      );
-    }
-
-    function clearValidation() {
-      document
-        .querySelectorAll(
-          "#skillForm .has-error"
-        )
-        .forEach(group => {
-          group.classList.remove(
-            "has-error"
-          );
-        });
-    }
-
-    function setFieldError(
-      fieldName,
-      hasError
-    ) {
-      const group =
-        document.querySelector(
-          `[data-field-group="${fieldName}"]`
-        );
-
-      if (!group) {
-        return;
-      }
-
-      group.classList.toggle(
-        "has-error",
-        hasError
-      );
-    }
-
-    function getFormValues() {
-      return {
-        name:
-          document
-            .getElementById("fullName")
-            .value.trim(),
-
-        meta:
-          document
-            .getElementById("collegeMeta")
-            .value.trim(),
-
-        category:
-          document
-            .getElementById("category")
-            .value,
-
-        title:
-          document
-            .getElementById("skillTitle")
-            .value.trim(),
-
-        description:
-          document
-            .getElementById("skillDesc")
-            .value.trim(),
-
-        price:
-          document
-            .getElementById("price")
-            .value.trim(),
-
-        phone:
-          cleanPhone(
-            document
-              .getElementById("phone")
-              .value
-          )
-      };
-    }
-
-    function validateForm(values) {
-      clearValidation();
-
-      let valid = true;
-
-      const rules = {
-        name:
-          values.name.length > 0,
-
-        meta:
-          values.meta.length > 0,
-
-        category:
-          values.category.length > 0,
-
-        title:
-          values.title.length > 0 &&
-          values.title.length <= 60,
-
-        description:
-          values.description.length > 0 &&
-          values.description.length <= 160,
-
-        price:
-          values.price.length > 0,
-
-        phone:
-          isValidPhone(values.phone)
-      };
-
-      for (
-        const [field, isValid] of
-        Object.entries(rules)
-      ) {
-        if (!isValid) {
-          setFieldError(
-            field,
-            true
-          );
-
-          valid = false;
-        }
-      }
-
-      return valid;
-    }
-
-    function validateImage(file) {
-      if (!file) {
-        return true;
-      }
-
-      const valid =
-        ALLOWED_IMAGE_TYPES.has(
-          file.type
-        ) &&
-        file.size <= MAX_IMAGE_SIZE;
-
-      setFieldError(
-        "image",
-        !valid
-      );
-
-      return valid;
-    }
-
-    async function uploadSkillImage(file) {
-      if (!file) {
-        return {
-          url: null,
-          path: null
-        };
-      }
-
-      const extension =
-        file.type === "image/jpeg"
-          ? "jpg"
-          : file.type === "image/png"
-            ? "png"
-            : "webp";
-
-      const randomId =
-        crypto.randomUUID
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random()
-              .toString(36)
-              .slice(2)}`;
-
-      const path =
-        `${state.currentUser.id}/${randomId}.${extension}`;
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .storage
-          .from(IMAGE_BUCKET)
-          .upload(
-            path,
-            file,
-            {
-              cacheControl: "3600",
-              contentType: file.type,
-              upsert: false
-            }
-          );
-
-      if (error) {
-        throw error;
-      }
-
-      const {
-        data
-      } =
-        supabaseClient
-          .storage
-          .from(IMAGE_BUCKET)
-          .getPublicUrl(path);
-
-      return {
-        url:
-          data?.publicUrl || null,
-        path
-      };
-    }
-
-    async function removeUploadedFile(path) {
-      if (!path) {
-        return;
-      }
-
-      try {
-        await supabaseClient
-          .storage
-          .from(IMAGE_BUCKET)
-          .remove([path]);
-      } catch (error) {
-        console.warn(
-          "Could not clean up uploaded image:",
-          error
-        );
-      }
-    }
-
-    async function handleSkillSubmit(event) {
-      event.preventDefault();
-
-      if (!state.currentUser) {
-        closeModal("postModal");
-        openAuthModal();
-        return;
-      }
-
-      const values =
-        getFormValues();
-
-      const imageFile =
-        dom.imageInput.files?.[0] ||
-        null;
-
-      const validForm =
-        validateForm(values);
-
-      const validImage =
-        validateImage(imageFile);
-
-      if (
-        !validForm ||
-        !validImage
-      ) {
-        return;
-      }
-
-      setButtonLoading(
-        dom.submitBtn,
-        true,
-        "Publishing...",
-        "Publish Skill Listing"
-      );
-
-      let uploadedPath =
-        null;
-
-      try {
-        const upload =
-          await uploadSkillImage(
-            imageFile
-          );
-
-        uploadedPath =
-          upload.path;
-
-        const payload = {
-          name:
-            values.name,
-
-          meta:
-            values.meta,
-
-          category:
-            values.category,
-
-          title:
-            values.title,
-
-          description:
-            values.description,
-
-          price:
-            values.price,
-
-          phone:
-            values.phone,
-
-          user_id:
-            state.currentUser.id,
-
-          image_url:
-            upload.url
-        };
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("skills")
-            .insert(payload);
-
-        if (error) {
-          throw error;
-        }
-
-        dom.skillForm.reset();
-        clearValidation();
-
-        closeModal(
-          "postModal"
-        );
-
-        await loadSkills();
-
-      } catch (error) {
-        console.error(
-          "Failed to publish skill:",
-          error
-        );
-
-        if (uploadedPath) {
-          await removeUploadedFile(
-            uploadedPath
-          );
-        }
-
-        if (isJwtError(error)) {
-          await clearLocalSession();
-
-          closeModal(
-            "postModal"
-          );
-
-          openAuthModal();
-
-          showAlert(
-            "Your session expired. Please sign in again."
-          );
-
-          return;
-        }
-
-        showAlert(
-          error?.message
-            ? `Could not publish listing: ${error.message}`
-            : "Could not publish the listing. Please try again."
-        );
-      } finally {
-        setButtonLoading(
-          dom.submitBtn,
-          false,
-          "Publishing...",
-          "Publish Skill Listing"
-        );
-      }
-    }
-
-    /*
-      ==========================================================
-      DELETE
-      ==========================================================
-    */
-
-    async function deleteListing(skillId) {
-      if (!state.currentUser) {
-        openAuthModal();
-        return;
-      }
-
-      if (!skillId) {
-        showAlert(
-          "Invalid listing."
-        );
-        return;
-      }
-
-      const confirmed =
-        window.confirm(
-          "Delete this listing?"
-        );
-
-      if (!confirmed) {
-        return;
-      }
-
-      try {
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("skills")
-            .delete()
-            .eq("id", skillId)
-            .eq(
-              "user_id",
-              state.currentUser.id
-            );
-
-        if (error) {
-          throw error;
-        }
-
-        await loadSkills();
-      } catch (error) {
-        console.error(
-          "Delete error:",
-          error
-        );
-
-        if (isJwtError(error)) {
-          await clearLocalSession();
-          openAuthModal();
-
-          showAlert(
-            "Your session expired. Please sign in again."
-          );
-
-          return;
-        }
-
-        showAlert(
-          "Could not delete the listing."
-        );
-      }
-    }
-
-    /*
-      ==========================================================
-      CONTACT
-      ==========================================================
-    */
-
-    function resetContactLink() {
-      dom.whatsappLink.removeAttribute(
-        "href"
-      );
-
-      dom.whatsappLink.classList.add(
-        "disabled"
-      );
-
-      dom.whatsappLink.setAttribute(
-        "aria-disabled",
-        "true"
-      );
-
-      dom.whatsappLink.textContent =
-        "Loading contact...";
-    }
-
-    async function openContactModal(
-      skillId,
-      creatorName
-    ) {
-      dom.modalName.textContent =
-        `Connect with ${creatorName || "Creator"}`;
-
-      resetContactLink();
-
-      openModal(
-        "contactModal"
-      );
-
-      try {
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.rpc(
-            "get_skill_phone",
-            {
-              skill_id: skillId
-            }
-          );
-
-        if (error) {
-          throw error;
-        }
-
-        const row =
-          Array.isArray(data)
-            ? data[0]
-            : data;
-
-        const phone =
-          cleanPhone(
-            row?.phone
-          );
-
-        if (!phone) {
-          dom.whatsappLink.textContent =
-            "Phone number unavailable";
-
-          return;
-        }
-
-        dom.whatsappLink.href =
-          `https://wa.me/${phone}`;
-
-        dom.whatsappLink.textContent =
-          "Open in WhatsApp";
-
-        dom.whatsappLink.classList.remove(
-          "disabled"
-        );
-
-        dom.whatsappLink.setAttribute(
-          "aria-disabled",
-          "false"
-        );
-
-      } catch (error) {
-        console.error(
-          "Contact lookup error:",
-          error
-        );
-
-        dom.whatsappLink.textContent =
-          "Contact details unavailable";
-      }
-    }
-
-    /*
-      ==========================================================
-      EVENT HANDLERS
-      ==========================================================
-    */
-
-    dom.authNavBtn.addEventListener(
-      "click",
-      handleAuthClick
-    );
-
-    dom.postSkillBtn.addEventListener(
-      "click",
-      openPostModal
-    );
-
-    dom.searchInput.addEventListener(
-      "input",
-      handleSearch
-    );
-
-    dom.authForm.addEventListener(
-      "submit",
-      handleAuthSubmit
-    );
-
-    dom.skillForm.addEventListener(
-      "submit",
-      handleSkillSubmit
-    );
-
-    document
-      .querySelectorAll(".filter-btn")
-      .forEach(button => {
-        button.addEventListener(
-          "click",
-          () =>
-            handleCategoryClick(button)
-        );
+  }
+
+  return ok;
+}
+
+/* =========================
+   STORAGE
+========================= */
+
+async function uploadImage(file) {
+  if (!file) return null;
+
+  if (!IMAGE_TYPES.has(file.type)) {
+    throw new Error("Image must be JPG, PNG, or WEBP.");
+  }
+
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error("Image must be under 3MB.");
+  }
+
+  const extension =
+    file.type === "image/jpeg"
+      ? "jpg"
+      : file.type === "image/png"
+        ? "png"
+        : "webp";
+
+  const id = crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  const path = `${state.user.id}/${id}.${extension}`;
+
+  const { error } = await supabaseClient.storage
+    .from(IMAGE_BUCKET)
+    .upload(path, file, {
+      cacheControl: "3600",
+      contentType: file.type,
+      upsert: false
+    });
+
+  if (error) throw error;
+
+  const { data } = supabaseClient.storage
+    .from(IMAGE_BUCKET)
+    .getPublicUrl(path);
+
+  return {
+    path,
+    url: data?.publicUrl || null
+  };
+}
+
+async function removeImage(path) {
+  if (!path) return;
+
+  try {
+    await supabaseClient.storage
+      .from(IMAGE_BUCKET)
+      .remove([path]);
+  } catch (error) {
+    console.warn("Image cleanup failed:", error);
+  }
+}
+
+/* =========================
+   POST
+========================= */
+
+function openPost() {
+  if (!state.user) {
+    notify("Sign in before posting a skill.", "error");
+    openModal("authModal", "#email");
+    return;
+  }
+
+  clearErrors();
+  openModal("postModal", "#name");
+}
+
+async function submitSkill(event) {
+  event.preventDefault();
+
+  if (!state.user) {
+    closeModal("postModal");
+    openModal("authModal", "#email");
+    return;
+  }
+
+  const data = values();
+
+  if (!validate(data)) {
+    notify("Please fix the highlighted fields.", "error");
+    return;
+  }
+
+  const file = dom.image.files?.[0] || null;
+
+  if (file && (!IMAGE_TYPES.has(file.type) || file.size > MAX_IMAGE_SIZE)) {
+    fieldError("image", true);
+    notify("Image must be JPG, PNG, or WEBP under 3MB.", "error");
+    return;
+  }
+
+  loading(dom.publish, true, "Publishing...");
+  let uploadedPath = null;
+
+  try {
+    const image = await uploadImage(file);
+    uploadedPath = image?.path || null;
+
+    const { error } = await supabaseClient
+      .from("skills")
+      .insert({
+        name: data.name,
+        meta: data.meta,
+        category: data.category,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        phone: data.phone,
+        user_id: state.user.id,
+        image_url: image?.url || null
       });
 
-    /*
-      Modal close buttons.
-    */
-    document
-      .querySelectorAll(
-        "[data-close-modal]"
-      )
-      .forEach(button => {
-        button.addEventListener(
-          "click",
-          () => {
-            closeModal(
-              button.dataset.closeModal
-            );
-          }
-        );
-      });
+    if (error) throw error;
 
-    /*
-      Clicking directly on the dark backdrop closes the modal.
-    */
-    document
-      .querySelectorAll(".modal-overlay")
-      .forEach(modal => {
-        modal.addEventListener(
-          "mousedown",
-          event => {
-            if (
-              event.target === modal
-            ) {
-              closeModal(
-                modal.id
-              );
-            }
-          }
-        );
-      });
+    dom.skillForm.reset();
+    clearErrors();
+    closeModal("postModal");
 
-    /*
-      Event delegation for dynamic listing buttons.
-    */
-    dom.grid.addEventListener(
-      "click",
-      event => {
-        const button =
-          event.target.closest(
-            "button[data-action]"
-          );
+    notify("Your skill is live.", "success");
+    await loadSkills();
 
-        if (!button) {
-          return;
-        }
+  } catch (error) {
+    console.error("Publish failed:", error);
 
-        const action =
-          button.dataset.action;
+    if (uploadedPath) await removeImage(uploadedPath);
 
-        const skillId =
-          button.dataset.skillId;
-
-        if (
-          action === "delete"
-        ) {
-          deleteListing(skillId);
-        }
-
-        if (
-          action === "contact"
-        ) {
-          openContactModal(
-            skillId,
-            button.dataset.creatorName
-          );
-        }
-      }
-    );
-
-    /*
-      Escape closes the currently active modal.
-    */
-    document.addEventListener(
-      "keydown",
-      event => {
-        if (
-          event.key !== "Escape"
-        ) {
-          return;
-        }
-
-        if (state.activeModalId) {
-          closeModal(
-            state.activeModalId
-          );
-        }
-      }
-    );
-
-    /*
-      ==========================================================
-      SUPABASE AUTH STATE
-      ==========================================================
-    */
-
-    supabaseClient.auth.onAuthStateChange(
-      (_event, session) => {
-        state.currentUser =
-          session?.user || null;
-
-        updateAuthUI();
-
-        /*
-          Avoid doing heavy Supabase work directly inside
-          the auth callback.
-        */
-        queueMicrotask(() => {
-          loadSkills();
-        });
-      }
-    );
-
-    /*
-      ==========================================================
-      INITIALIZATION
-      ==========================================================
-    */
-
-    async function initializeApp() {
-      if (!window.supabase) {
-        renderErrorState();
-
-        console.error(
-          "Supabase library failed to load."
-        );
-
-        return;
-      }
-
-      try {
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth.getSession();
-
-        if (error) {
-          console.warn(
-            "Could not restore session:",
-            error
-          );
-
-          await clearLocalSession();
-        } else {
-          state.currentUser =
-            data?.session?.user || null;
-        }
-      } catch (error) {
-        console.error(
-          "Session initialization failed:",
-          error
-        );
-
-        state.currentUser = null;
-      }
-
+    if (authError(error)) {
+      state.user = null;
       updateAuthUI();
-
-      await loadSkills();
+      closeModal("postModal");
+      openModal("authModal", "#email");
+      notify("Your session expired. Please sign in again.", "error");
+      return;
     }
 
-    initializeApp();
-  </script>
+    notify(
+      error?.message
+        ? String(error.message)
+        : "Could not publish the listing.",
+      "error"
+    );
+  } finally {
+    loading(dom.publish, false);
+  }
+}
 
+/* =========================
+   DELETE
+========================= */
+
+async function deleteSkill(id) {
+  if (!state.user) {
+    openModal("authModal", "#email");
+    return;
+  }
+
+  if (!confirm("Delete this listing?")) return;
+
+  try {
+    const { error } = await supabaseClient
+      .from("skills")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", state.user.id);
+
+    if (error) throw error;
+
+    notify("Listing deleted.", "success");
+    await loadSkills();
+
+  } catch (error) {
+    console.error("Delete failed:", error);
+
+    if (authError(error)) {
+      state.user = null;
+      updateAuthUI();
+      notify("Your session expired.", "error");
+      return;
+    }
+
+    notify("Could not delete this listing.", "error");
+  }
+}
+
+/* =========================
+   CONTACT
+========================= */
+
+async function openContact(id, creator) {
+  dom.contactTitle.textContent = `Connect with ${creator || "Creator"}`;
+  dom.contactText.textContent = "Fetching contact details...";
+  dom.whatsapp.hidden = true;
+  dom.whatsapp.removeAttribute("href");
+
+  openModal("contactModal");
+
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "get_skill_phone",
+      { skill_id: id }
+    );
+
+    if (error) throw error;
+
+    const row = Array.isArray(data) ? data[0] : data;
+    const phone = cleanPhone(row?.phone);
+
+    if (!phone) {
+      dom.contactText.textContent =
+        "This creator has no available WhatsApp number.";
+      return;
+    }
+
+    dom.whatsapp.href = `https://wa.me/${phone}`;
+    dom.whatsapp.hidden = false;
+    dom.contactText.textContent =
+      "Open WhatsApp to arrange the details directly.";
+
+  } catch (error) {
+    console.error("Contact lookup failed:", error);
+
+    dom.contactText.textContent =
+      "Contact details are unavailable right now.";
+  }
+}
+
+/* =========================
+   EVENTS
+========================= */
+
+dom.authBtn.addEventListener("click", handleAuthButton);
+dom.postBtn.addEventListener("click", openPost);
+dom.authForm.addEventListener("submit", handleAuthSubmit);
+dom.skillForm.addEventListener("submit", submitSkill);
+dom.search.addEventListener("input", handleSearch);
+
+$$(".filter").forEach(buttonNode => {
+  buttonNode.addEventListener("click", () =>
+    handleFilter(buttonNode)
+  );
+});
+
+$$("[data-close]").forEach(buttonNode => {
+  buttonNode.addEventListener("click", () =>
+    closeModal(buttonNode.dataset.close)
+  );
+});
+
+$$(".modal").forEach(modal => {
+  modal.addEventListener("mousedown", event => {
+    if (event.target === modal) {
+      closeModal(modal.id);
+    }
+  });
+});
+
+dom.grid.addEventListener("click", event => {
+  const node = event.target.closest("[data-action]");
+  if (!node) return;
+
+  if (node.dataset.action === "delete") {
+    deleteSkill(node.dataset.id);
+  }
+
+  if (node.dataset.action === "contact") {
+    openContact(
+      node.dataset.id,
+      node.dataset.name
+    );
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && state.modalId) {
+    closeModal(state.modalId);
+  }
+});
+
+/* =========================
+   AUTH STATE
+========================= */
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  state.user = session?.user || null;
+  updateAuthUI();
+
+  setTimeout(() => {
+    loadSkills();
+  }, 0);
+});
+
+/* =========================
+   START
+========================= */
+
+(async function init() {
+  try {
+    await getSession();
+  } catch (error) {
+    console.error("Session init failed:", error);
+    state.user = null;
+    updateAuthUI();
+  }
+
+  await loadSkills();
+})();
+</script>
 </body>
 </html>
