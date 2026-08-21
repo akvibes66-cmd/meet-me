@@ -1,87 +1,160 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Meetme by PELQ — Global Skills Marketplace</title>
-  <meta name="description" content="Connect directly with skilled creators worldwide with zero platform fees." />
+
+  <meta
+    name="description"
+    content="Connect directly with skilled creators worldwide with zero platform fees."
+  >
+
+  <meta name="theme-color" content="#FAF7F2">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://exeqybodcbletjcdhjfw.supabase.co" crossorigin />
-  <link rel="dns-prefetch" href="https://exeqybodcbletjcdhjfw.supabase.co" />
 
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap"
+    rel="stylesheet"
+  >
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    defer
+  ></script>
 
   <style>
     :root {
-      --color-forest: #1A7A4A;
-      --color-forest-dark: #125734;
-      --color-cream: #FAF7F2;
-      --color-surface: #FFFFFF;
-      --color-charcoal: #0F1A14;
-      --color-muted: #5C6B61;
-      --color-accent: #F5C842;
-      --color-border: #E8E3DA;
-      --color-error: #D9383A;
+      --forest: #1A7A4A;
+      --forest-dark: #125734;
+      --cream: #FAF7F2;
+      --surface: #FFFFFF;
+      --charcoal: #0F1A14;
+      --muted: #5C6B61;
+      --accent: #F5C842;
+      --border: #E8E3DA;
+      --error: #D9383A;
+      --success: #177245;
 
-      --font-serif: 'Fraunces', Georgia, serif;
-      --font-sans: 'DM Sans', -apple-system, sans-serif;
+      --font-serif: "Fraunces", Georgia, serif;
+      --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
       --radius-sm: 8px;
       --radius-md: 16px;
       --radius-lg: 24px;
+      --pill: 999px;
+
       --shadow-card: 0 4px 20px rgba(15, 26, 20, 0.05);
-      --shadow-hover: 0 12px 28px rgba(15, 26, 20, 0.12);
-      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      --shadow-hover: 0 12px 32px rgba(15, 26, 20, 0.12);
+
+      --transition:
+        180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+      --container: 1200px;
     }
 
-    * {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      background-color: var(--color-cream);
-      color: var(--color-charcoal);
+      margin: 0;
+      background: var(--cream);
+      color: var(--charcoal);
       font-family: var(--font-sans);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    a {
+      color: inherit;
     }
 
     .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
+      width: min(var(--container), calc(100% - 48px));
+      margin-inline: auto;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* --------------------------------------------------
+       NAV
+    -------------------------------------------------- */
+
     .navbar {
-      background: var(--color-cream);
-      border-bottom: 1px solid var(--color-border);
       position: sticky;
       top: 0;
       z-index: 100;
       padding: 16px 0;
+      background: color-mix(
+        in srgb,
+        var(--cream) 92%,
+        transparent
+      );
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
     }
 
     .nav-content {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 20px;
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
       text-decoration: none;
-      color: var(--color-charcoal);
+      color: var(--charcoal);
     }
 
     .brand-logo-container {
@@ -91,96 +164,164 @@
 
     .brand-logo {
       font-family: var(--font-serif);
-      font-weight: 700;
       font-size: 1.5rem;
-      letter-spacing: -0.02em;
+      font-weight: 700;
       line-height: 1;
+      letter-spacing: -0.03em;
     }
 
     .brand-byline {
-      font-size: 0.65rem;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.62rem;
       font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--color-muted);
-      margin-top: 2px;
     }
 
     .nav-actions {
       display: flex;
-      gap: 12px;
       align-items: center;
+      gap: 10px;
+    }
+
+    /* --------------------------------------------------
+       BUTTONS
+    -------------------------------------------------- */
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-weight: 650;
+      font-size: 0.92rem;
+      line-height: 1;
+      transition:
+        transform var(--transition),
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn:focus-visible,
+    .filter-btn:focus-visible,
+    .search-input:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    .modal-close-btn:focus-visible {
+      outline: 3px solid rgba(26, 122, 74, 0.22);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: var(--forest);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--forest-dark);
     }
 
     .btn-secondary {
       background: transparent;
-      border: 1.5px solid var(--color-charcoal);
-      color: var(--color-charcoal);
-      font-family: var(--font-sans);
-      font-weight: 600;
-      padding: 10px 18px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: var(--transition);
+      color: var(--charcoal);
+      border-color: var(--charcoal);
     }
 
-    .btn-secondary:hover {
-      background: var(--color-charcoal);
-      color: var(--color-cream);
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--charcoal);
+      color: var(--cream);
     }
+
+    .btn-danger {
+      color: var(--error);
+      border-color: var(--error);
+      background: transparent;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      color: #fff;
+      background: var(--error);
+    }
+
+    /* --------------------------------------------------
+       HERO
+    -------------------------------------------------- */
 
     .hero {
-      padding: 48px 0 32px;
+      padding: 64px 0 28px;
       text-align: center;
     }
 
     .hero-title {
+      max-width: 850px;
+      margin: 0 auto 18px;
       font-family: var(--font-serif);
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
-      line-height: 1.1;
+      font-size: clamp(2.25rem, 6vw, 4rem);
       font-weight: 700;
-      max-width: 800px;
-      margin: 0 auto 16px;
-      letter-spacing: -0.01em;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
     }
 
     .hero-subtitle {
-      color: var(--color-muted);
-      font-size: 1.125rem;
-      max-width: 540px;
+      max-width: 620px;
       margin: 0 auto 32px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.12rem);
     }
 
     .search-container {
-      max-width: 680px;
-      margin: 0 auto 24px;
+      width: min(680px, 100%);
+      margin: 0 auto;
     }
 
     .search-input {
       width: 100%;
+      min-height: 54px;
       padding: 14px 20px;
-      font-size: 1rem;
-      font-family: var(--font-sans);
-      border-radius: 99px;
-      border: 1px solid var(--color-border);
-      background: var(--color-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--pill);
+      background: var(--surface);
+      color: var(--charcoal);
       box-shadow: var(--shadow-card);
-      transition: var(--transition);
+      transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+    }
+
+    .search-input::placeholder {
+      color: #8A948D;
     }
 
     .search-input:focus {
+      border-color: var(--forest);
+      box-shadow:
+        0 0 0 4px rgba(26, 122, 74, 0.12),
+        var(--shadow-card);
       outline: none;
-      border-color: var(--color-forest);
-      box-shadow: 0 0 0 3px rgba(26, 122, 74, 0.15);
     }
+
+    /* --------------------------------------------------
+       FILTERS
+    -------------------------------------------------- */
 
     .filters {
       display: flex;
+      justify-content: center;
       gap: 10px;
       overflow-x: auto;
-      padding-bottom: 12px;
-      margin-bottom: 40px;
-      justify-content: center;
+      padding: 4px 0 14px;
+      margin-bottom: 30px;
       scrollbar-width: none;
     }
 
@@ -189,198 +330,292 @@
     }
 
     .filter-btn {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      color: var(--color-charcoal);
-      font-family: var(--font-sans);
-      font-weight: 500;
-      font-size: 0.9rem;
-      padding: 10px 20px;
-      border-radius: 99px;
+      flex: 0 0 auto;
+      padding: 9px 17px;
+      border: 1px solid var(--border);
+      border-radius: var(--pill);
+      background: var(--surface);
+      color: var(--charcoal);
+      font-size: 0.88rem;
+      font-weight: 600;
       white-space: nowrap;
-      cursor: pointer;
-      transition: var(--transition);
+      transition:
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
     }
 
-    .filter-btn.active,
     .filter-btn:hover {
-      background: var(--color-forest);
-      color: var(--color-surface);
-      border-color: var(--color-forest);
+      transform: translateY(-1px);
+      border-color: var(--forest);
     }
+
+    .filter-btn.active {
+      background: var(--forest);
+      color: #fff;
+      border-color: var(--forest);
+    }
+
+    /* --------------------------------------------------
+       GRID / STATES
+    -------------------------------------------------- */
 
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 28px;
+      grid-template-columns:
+        repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
       padding-bottom: 80px;
     }
 
-    .empty-state {
+    .state-card {
       grid-column: 1 / -1;
-      text-align: center;
-      padding: 60px 20px;
-      background: var(--color-surface);
-      border: 1px dashed var(--color-border);
+      padding: 64px 24px;
+      border: 1px dashed var(--border);
       border-radius: var(--radius-md);
-      color: var(--color-muted);
+      background: var(--surface);
+      text-align: center;
+      color: var(--muted);
     }
 
+    .state-card strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--charcoal);
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+    }
+
+    .state-card.error strong {
+      color: var(--error);
+    }
+
+    /* --------------------------------------------------
+       SKILL CARD
+    -------------------------------------------------- */
+
     .skill-card {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      padding: 24px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
       box-shadow: var(--shadow-card);
-      transition: var(--transition);
+      transition:
+        transform var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
     }
 
     .skill-card:hover {
       transform: translateY(-4px);
+      border-color: rgba(26, 122, 74, 0.45);
       box-shadow: var(--shadow-hover);
-      border-color: var(--color-forest);
+    }
+
+    .skill-card-content {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 22px;
     }
 
     .card-header {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       margin-bottom: 16px;
     }
 
     .avatar {
-      width: 48px;
-      height: 48px;
+      display: grid;
+      flex: 0 0 46px;
+      width: 46px;
+      height: 46px;
+      place-items: center;
       border-radius: 50%;
-      background-color: var(--color-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #EEF3EF;
+      color: var(--forest);
       font-family: var(--font-serif);
-      font-weight: 700;
-      color: var(--color-forest);
-      font-size: 1.2rem;
-      flex: 0 0 auto;
-    }
-
-    .peer-info .name {
-      font-family: var(--font-serif);
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
     }
 
-    .peer-info .meta {
-      font-size: 0.825rem;
-      color: var(--color-muted);
+    .peer-info {
+      min-width: 0;
+    }
+
+    .peer-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .peer-meta {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .skill-image {
+      width: 100%;
+      height: 190px;
+      margin-bottom: 18px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background: #EEF1ED;
     }
 
     .skill-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 8px;
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+      font-weight: 750;
       line-height: 1.3;
-      word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     .skill-desc {
-      font-size: 0.925rem;
-      color: var(--color-muted);
-      margin-bottom: 20px;
-      word-break: break-word;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
     }
 
     .card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding-top: 16px;
-      border-top: 1px dashed var(--color-border);
+      gap: 14px;
+      margin-top: auto;
+      padding-top: 18px;
     }
 
     .price-tag {
+      flex: 0 0 auto;
+      color: var(--forest);
       font-family: var(--font-serif);
-      font-weight: 700;
-      font-size: 1.2rem;
-      color: var(--color-forest);
+      font-size: 1.15rem;
+      font-weight: 750;
     }
 
-    .btn-primary {
-      background: var(--color-forest);
-      color: var(--color-surface);
-      border: none;
-      font-family: var(--font-sans);
-      font-weight: 600;
-      font-size: 0.9rem;
-      padding: 10px 18px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: var(--transition);
+    .card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .btn-primary:hover {
-      background: var(--color-forest-dark);
+    .card-actions .btn {
+      min-height: 38px;
+      padding: 9px 13px;
+      font-size: 0.82rem;
     }
 
-    .btn-primary:disabled,
-    .btn-secondary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    /* --------------------------------------------------
+       FOOTER
+    -------------------------------------------------- */
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      text-align: center;
     }
+
+    /* --------------------------------------------------
+       MODALS
+    -------------------------------------------------- */
 
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 26, 20, 0.6);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(15, 26, 20, 0.62);
+      backdrop-filter: blur(6px);
       opacity: 0;
       pointer-events: none;
-      transition: var(--transition);
-      z-index: 200;
-      padding: 20px;
+      visibility: hidden;
+      transition:
+        opacity var(--transition),
+        visibility var(--transition);
     }
 
     .modal-overlay.active {
       opacity: 1;
       pointer-events: auto;
+      visibility: visible;
     }
 
     .modal-card {
-      background: var(--color-surface);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      max-width: 520px;
-      width: 100%;
-      box-shadow: var(--shadow-hover);
-      max-height: 90vh;
+      width: min(520px, 100%);
+      max-height: min(90vh, 850px);
       overflow-y: auto;
+      padding: 30px;
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(12px) scale(0.985);
+      transition: transform var(--transition);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0) scale(1);
     }
 
     .modal-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
     }
 
-    .modal-header h3 {
+    .modal-header h2,
+    .contact-title {
+      margin: 0;
       font-family: var(--font-serif);
-      font-size: 1.6rem;
+      font-size: 1.55rem;
+      line-height: 1.15;
     }
 
     .modal-close-btn {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--color-muted);
+      display: grid;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1.2rem;
+      transition:
+        background var(--transition),
+        color var(--transition);
     }
+
+    .modal-close-btn:hover {
+      background: var(--cream);
+      color: var(--charcoal);
+    }
+
+    /* --------------------------------------------------
+       FORMS
+    -------------------------------------------------- */
 
     .form-group {
       margin-bottom: 16px;
@@ -392,104 +627,178 @@
       gap: 12px;
     }
 
-    label {
+    .form-label {
       display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--color-charcoal);
+      margin-bottom: 7px;
+      color: var(--charcoal);
+      font-size: 0.84rem;
+      font-weight: 700;
     }
 
-    input,
-    select,
-    textarea {
+    .field {
       width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--color-border);
+      min-height: 44px;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      font-family: var(--font-sans);
-      font-size: 0.95rem;
-      background: var(--color-surface);
-      color: var(--color-charcoal);
-      transition: var(--transition);
+      background: var(--surface);
+      color: var(--charcoal);
+      transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
+    textarea.field {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .field:focus {
+      border-color: var(--forest);
+      box-shadow: 0 0 0 4px rgba(26, 122, 74, 0.1);
       outline: none;
-      border-color: var(--color-forest);
-      box-shadow: 0 0 0 3px rgba(26, 122, 74, 0.15);
     }
 
-    .error-text {
-      color: var(--color-error);
-      font-size: 0.75rem;
-      margin-top: 4px;
+    .field::file-selector-button {
+      margin-right: 12px;
+      padding: 7px 10px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--cream);
+      color: var(--charcoal);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .field-error {
       display: none;
+      margin-top: 5px;
+      color: var(--error);
+      font-size: 0.75rem;
     }
 
-    .has-error input,
-    .has-error select,
-    .has-error textarea {
-      border-color: var(--color-error);
+    .form-group.has-error .field {
+      border-color: var(--error);
     }
 
-    .has-error .error-text {
+    .form-group.has-error .field-error {
       display: block;
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    /* --------------------------------------------------
+       CONTACT
+    -------------------------------------------------- */
+
+    .contact-modal-body {
+      text-align: center;
+    }
+
+    .contact-description {
+      margin: 10px 0 24px;
+      color: var(--muted);
+    }
+
+    .contact-links {
+      display: grid;
+      gap: 10px;
     }
 
     .contact-btn {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
       width: 100%;
-      padding: 14px;
       border-radius: var(--radius-sm);
-      font-weight: 600;
+      font-weight: 700;
       text-decoration: none;
-      display: block;
-      text-align: center;
     }
 
     .btn-whatsapp {
       background: #25D366;
-      color: white;
+      color: #fff;
     }
 
-    .btn-close {
-      background: var(--color-cream);
-      color: var(--color-charcoal);
-      border: 1px solid var(--color-border);
-      cursor: pointer;
-      margin-top: 12px;
+    .btn-whatsapp.disabled {
+      pointer-events: none;
+      opacity: 0.65;
     }
 
-    footer {
-      border-top: 1px solid var(--color-border);
-      padding: 24px 0;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--color-muted);
+    .btn-modal-close {
+      border: 1px solid var(--border);
+      background: var(--cream);
+      color: var(--charcoal);
     }
 
-    @media (max-width: 600px) {
+    /* --------------------------------------------------
+       MOBILE
+    -------------------------------------------------- */
+
+    @media (max-width: 700px) {
+      .container {
+        width: min(var(--container), calc(100% - 32px));
+      }
+
+      .navbar {
+        padding: 12px 0;
+      }
+
+      .nav-content {
+        gap: 12px;
+      }
+
+      .nav-actions {
+        gap: 7px;
+      }
+
+      .nav-actions .btn {
+        padding: 9px 11px;
+        font-size: 0.8rem;
+      }
+
+      .hero {
+        padding-top: 44px;
+      }
+
       .hero-title {
-        font-size: 2rem;
-      }
-
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
+        font-size: clamp(2rem, 11vw, 3rem);
       }
 
       .filters {
         justify-content: flex-start;
       }
 
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
       .card-footer {
-        align-items: flex-end;
-        flex-wrap: wrap;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .card-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .modal-card {
+        padding: 22px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -499,27 +808,30 @@
 
   <nav class="navbar">
     <div class="container nav-content">
-      <a href="#" class="brand">
-        <div class="brand-logo-container">
+      <a
+        href="#"
+        class="brand"
+        aria-label="Meetme home"
+      >
+        <span class="brand-logo-container">
           <span class="brand-logo">Meetme</span>
           <span class="brand-byline">by PELQ</span>
-        </div>
+        </span>
       </a>
 
       <div class="nav-actions">
         <button
           id="authNavBtn"
-          class="btn-secondary"
+          class="btn btn-secondary"
           type="button"
-          onclick="openAuthModal()"
         >
           Sign In
         </button>
 
         <button
-          class="btn-primary"
+          id="postSkillBtn"
+          class="btn btn-primary"
           type="button"
-          onclick="openPostModal()"
         >
           Post a Skill
         </button>
@@ -535,27 +847,38 @@
       </h1>
 
       <p class="hero-subtitle">
-        Need a quick photo edit, code review, or design work?
-        Connect directly with skilled creators everywhere via Meetme by PELQ.
+        Need a quick photo edit, code review, tutoring session,
+        or design work? Connect directly with skilled creators
+        everywhere via Meetme by PELQ.
       </p>
 
       <div class="search-container">
+        <label
+          class="sr-only"
+          for="searchInput"
+        >
+          Search skill listings
+        </label>
+
         <input
-          type="text"
           id="searchInput"
           class="search-input"
-          placeholder="Search by skill, title, creator name, or location..."
-          oninput="handleSearch()"
+          type="search"
+          maxlength="100"
           autocomplete="off"
-        />
+          placeholder="Search skills, titles, creators, or locations..."
+        >
       </div>
     </section>
 
-    <div class="filters">
+    <section
+      class="filters"
+      aria-label="Skill categories"
+    >
       <button
         type="button"
         class="filter-btn active"
-        onclick="filterCategory('All', this)"
+        data-category="All"
       >
         All Skills
       </button>
@@ -563,7 +886,7 @@
       <button
         type="button"
         class="filter-btn"
-        onclick="filterCategory('Photo & Video', this)"
+        data-category="Photo & Video"
       >
         📸 Photo & Video
       </button>
@@ -571,7 +894,7 @@
       <button
         type="button"
         class="filter-btn"
-        onclick="filterCategory('Code & Web', this)"
+        data-category="Code & Web"
       >
         💻 Code & Web
       </button>
@@ -579,7 +902,7 @@
       <button
         type="button"
         class="filter-btn"
-        onclick="filterCategory('Tutoring & Notes', this)"
+        data-category="Tutoring & Notes"
       >
         📝 Tutoring & Notes
       </button>
@@ -587,84 +910,122 @@
       <button
         type="button"
         class="filter-btn"
-        onclick="filterCategory('Design & Branding', this)"
+        data-category="Design & Branding"
       >
         🎨 Design & Branding
       </button>
-    </div>
+    </section>
 
-    <div class="card-grid" id="cardGrid"></div>
+    <section
+      id="cardGrid"
+      class="card-grid"
+      aria-live="polite"
+      aria-busy="true"
+    ></section>
 
   </main>
 
   <!-- POST SKILL MODAL -->
 
-  <div class="modal-overlay" id="postModal">
-    <div class="modal-card">
-
+  <div
+    id="postModal"
+    class="modal-overlay"
+    aria-hidden="true"
+  >
+    <div
+      class="modal-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="postModalTitle"
+    >
       <div class="modal-header">
-        <h3>Post Your Skill</h3>
+        <h2 id="postModalTitle">
+          Post Your Skill
+        </h2>
 
         <button
           type="button"
           class="modal-close-btn"
-          onclick="closePostModal()"
+          data-close-modal="postModal"
           aria-label="Close"
         >
-          ✕
+          ×
         </button>
       </div>
 
       <form
         id="skillForm"
-        onsubmit="handleSkillSubmit(event)"
         novalidate
       >
 
         <div class="form-row">
 
-          <div class="form-group" id="group-name">
-            <label for="fullName">Full Name</label>
+          <div
+            class="form-group"
+            data-field-group="fullName"
+          >
+            <label
+              class="form-label"
+              for="fullName"
+            >
+              Full Name
+            </label>
 
             <input
-              type="text"
               id="fullName"
-              placeholder="e.g. Maya Lin"
+              class="field"
+              type="text"
               maxlength="200"
               autocomplete="name"
-            />
+              placeholder="e.g. Maya Lin"
+            >
 
-            <span class="error-text">
+            <div class="field-error">
               Name is required.
-            </span>
+            </div>
           </div>
 
-          <div class="form-group" id="group-meta">
-            <label for="collegeMeta">
+          <div
+            class="form-group"
+            data-field-group="meta"
+          >
+            <label
+              class="form-label"
+              for="collegeMeta"
+            >
               Location / Role
             </label>
 
             <input
-              type="text"
               id="collegeMeta"
-              placeholder="e.g. Lagos • Freelance Designer"
+              class="field"
+              type="text"
               maxlength="200"
-            />
+              placeholder="e.g. Lagos • Freelance Designer"
+            >
 
-            <span class="error-text">
-              Location/Role is required.
-            </span>
+            <div class="field-error">
+              Location / Role is required.
+            </div>
           </div>
 
         </div>
 
-        <div class="form-group" id="group-category">
-
-          <label for="category">
+        <div
+          class="form-group"
+          data-field-group="category"
+        >
+          <label
+            class="form-label"
+            for="category"
+          >
             Category
           </label>
 
-          <select id="category">
+          <select
+            id="category"
+            class="field"
+          >
             <option value="">
               Select Category
             </option>
@@ -686,254 +1047,323 @@
             </option>
           </select>
 
-          <span class="error-text">
+          <div class="field-error">
             Please select a category.
-          </span>
-
+          </div>
         </div>
 
-        <div class="form-group" id="group-title">
-
-          <label for="skillTitle">
+        <div
+          class="form-group"
+          data-field-group="title"
+        >
+          <label
+            class="form-label"
+            for="skillTitle"
+          >
             Skill Title
           </label>
 
           <input
-            type="text"
             id="skillTitle"
-            placeholder="e.g. Portrait Color Grading & Edits"
+            class="field"
+            type="text"
             maxlength="60"
-          />
+            placeholder="e.g. Portrait Color Grading & Edits"
+          >
 
-          <span class="error-text">
-            Title required (max 60 chars).
-          </span>
-
+          <div class="field-error">
+            Title is required and must be 60 characters or fewer.
+          </div>
         </div>
 
-        <div class="form-group" id="group-desc">
-
-          <label for="skillDesc">
+        <div
+          class="form-group"
+          data-field-group="description"
+        >
+          <label
+            class="form-label"
+            for="skillDesc"
+          >
             Description
           </label>
 
           <textarea
             id="skillDesc"
-            rows="3"
-            placeholder="Describe turnaround time, scope, or deliverables..."
+            class="field"
+            rows="4"
             maxlength="160"
+            placeholder="Describe turnaround time, scope, or deliverables..."
           ></textarea>
 
-          <span class="error-text">
-            Description required (max 160 chars).
-          </span>
-
+          <div class="field-error">
+            Description is required and must be 160 characters or fewer.
+          </div>
         </div>
 
         <div class="form-row">
 
-          <div class="form-group" id="group-price">
-
-            <label for="price">
+          <div
+            class="form-group"
+            data-field-group="price"
+          >
+            <label
+              class="form-label"
+              for="price"
+            >
               Pricing
             </label>
 
             <input
-              type="text"
               id="price"
-              placeholder="e.g. $15 or ₦10,000 / set"
+              class="field"
+              type="text"
               maxlength="100"
-            />
+              placeholder="e.g. $15 or ₦10,000 / set"
+            >
 
-            <span class="error-text">
-              Pricing details required.
-            </span>
-
+            <div class="field-error">
+              Pricing details are required.
+            </div>
           </div>
 
-          <div class="form-group" id="group-phone">
-
-            <label for="phone">
+          <div
+            class="form-group"
+            data-field-group="phone"
+          >
+            <label
+              class="form-label"
+              for="phone"
+            >
               WhatsApp / Phone Number
             </label>
 
             <input
-              type="tel"
               id="phone"
-              placeholder="e.g. 2348012345678"
+              class="field"
+              type="tel"
+              maxlength="30"
               autocomplete="tel"
-            />
+              placeholder="e.g. 2348012345678"
+            >
 
-            <span class="error-text">
-              Valid international digits required.
-            </span>
-
+            <div class="field-error">
+              Enter 7–15 international digits.
+            </div>
           </div>
 
         </div>
 
-        <div class="form-group" id="group-image">
-
-          <label for="skillImage">
-            Listing Image (Optional)
+        <div
+          class="form-group"
+          data-field-group="image"
+        >
+          <label
+            class="form-label"
+            for="skillImage"
+          >
+            Listing Image
+            <span aria-hidden="true">(optional)</span>
           </label>
 
           <input
-            type="file"
             id="skillImage"
-            accept="image/png, image/jpeg, image/webp"
-          />
+            class="field"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+          >
 
-          <span class="error-text">
-            Image must be JPEG, PNG, or WEBP under 3MB.
-          </span>
-
+          <div class="field-error">
+            Image must be JPG, PNG, or WEBP and under 3MB.
+          </div>
         </div>
 
         <button
-          type="submit"
           id="submitBtn"
-          class="btn-primary"
-          style="width: 100%; margin-top: 12px; padding: 12px;"
+          class="btn btn-primary submit-btn"
+          type="submit"
         >
           Publish Skill Listing
         </button>
-
       </form>
     </div>
   </div>
 
   <!-- AUTH MODAL -->
 
-  <div class="modal-overlay" id="authModal">
-    <div class="modal-card">
-
+  <div
+    id="authModal"
+    class="modal-overlay"
+    aria-hidden="true"
+  >
+    <div
+      class="modal-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="authModalTitle"
+    >
       <div class="modal-header">
-
-        <h3>
+        <h2 id="authModalTitle">
           Sign In to Meetme
-        </h3>
+        </h2>
 
         <button
           type="button"
           class="modal-close-btn"
-          onclick="closeAuthModal()"
+          data-close-modal="authModal"
           aria-label="Close"
         >
-          ✕
+          ×
         </button>
-
       </div>
 
-      <form
-        id="authForm"
-        onsubmit="handleAuthSubmit(event)"
-      >
+      <form id="authForm" novalidate>
 
         <div class="form-group">
-
-          <label for="authEmail">
+          <label
+            class="form-label"
+            for="authEmail"
+          >
             Email Address
           </label>
 
           <input
-            type="email"
             id="authEmail"
-            placeholder="you@example.com"
+            class="field"
+            type="email"
             required
             autocomplete="email"
-          />
-
+            placeholder="you@example.com"
+          >
         </div>
 
         <button
-          type="submit"
           id="authSubmitBtn"
-          class="btn-primary"
-          style="width: 100%; padding: 12px;"
+          class="btn btn-primary submit-btn"
+          type="submit"
         >
           Send Magic Link
         </button>
 
       </form>
-
     </div>
   </div>
 
   <!-- CONTACT MODAL -->
 
-  <div class="modal-overlay" id="contactModal">
-
+  <div
+    id="contactModal"
+    class="modal-overlay"
+    aria-hidden="true"
+  >
     <div
-      class="modal-card"
-      style="text-align: center;"
+      class="modal-card contact-modal-body"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalName"
     >
 
-      <h3
-        id="modalName"
-        style="margin-bottom: 8px;"
-      >
-        Connect
-      </h3>
+      <div class="modal-header">
+        <h2
+          id="modalName"
+          class="contact-title"
+        >
+          Connect
+        </h2>
 
-      <p
-        style="
-          color: var(--color-muted);
-          margin-bottom: 24px;
-        "
-      >
-        Choose your preferred platform to arrange details directly.
-        Zero platform fees.
+        <button
+          type="button"
+          class="modal-close-btn"
+          data-close-modal="contactModal"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+
+      <p class="contact-description">
+        Arrange the details directly with the creator.
+        There are no platform fees.
       </p>
 
       <div class="contact-links">
 
         <a
           id="whatsappLink"
+          class="contact-btn btn-whatsapp disabled"
           href="#"
           target="_blank"
           rel="noopener noreferrer"
-          class="contact-btn btn-whatsapp"
+          aria-disabled="true"
         >
-          Loading Phone Securely...
+          Loading contact...
         </a>
 
         <button
           type="button"
-          class="contact-btn btn-close"
-          onclick="closeContactModal()"
+          class="contact-btn btn-modal-close"
+          data-close-modal="contactModal"
         >
           Close
         </button>
 
       </div>
-
     </div>
   </div>
 
   <footer>
-
     <div class="container">
-
       <p>
         <strong>Meetme</strong>
         — Engineered by
         <strong>PELQ</strong>
       </p>
-
     </div>
-
   </footer>
 
   <script>
+    "use strict";
+
+    /*
+      ==========================================================
+      CONFIG
+      ==========================================================
+    */
+
     const SUPABASE_URL =
-      'https://exeqybodcbletjcdhjfw.supabase.co';
+      "https://exeqybodcbletjcdhjfw.supabase.co";
 
     const SUPABASE_ANON_KEY =
-      'sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg';
+      "sb_publishable_AnnyR-3yXPKHObVLYq0eIA_V5RUV8kg";
 
-    const APP_URL =
-      'https://playful-cobbler-95dd76.netlify.app';
+    const IMAGE_BUCKET =
+      "skill-images";
+
+    const MAX_IMAGE_SIZE =
+      3 * 1024 * 1024;
+
+    const ALLOWED_IMAGE_TYPES = new Set([
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ]);
+
+    /*
+      ==========================================================
+      STATE
+      ==========================================================
+    */
+
+    const state = {
+      currentUser: null,
+      currentFilter: "All",
+      searchQuery: "",
+      skills: [],
+      isLoadingSkills: false,
+      renderVersion: 0,
+      activeModalId: null,
+      lastFocusedElement: null,
+      searchTimer: null
+    };
 
     const supabaseClient =
       window.supabase.createClient(
@@ -948,66 +1378,1649 @@
         }
       );
 
-    let currentFilter = 'All';
-    let searchQuery = '';
-    let currentUser = null;
+    /*
+      ==========================================================
+      DOM
+      ==========================================================
+    */
 
-    /* =====================================================
-       SESSION
-       ===================================================== */
+    const dom = {
+      grid:
+        document.getElementById("cardGrid"),
 
-    async function purgeStaleSession() {
-      try {
-        await supabaseClient.auth.signOut({
-          scope: 'local'
-        });
-      } catch (e) {
-        console.warn(
-          'Session cleanup failed:',
-          e
-        );
-      }
+      authNavBtn:
+        document.getElementById("authNavBtn"),
 
-      currentUser = null;
-      updateAuthUI();
+      postSkillBtn:
+        document.getElementById("postSkillBtn"),
+
+      searchInput:
+        document.getElementById("searchInput"),
+
+      authForm:
+        document.getElementById("authForm"),
+
+      authEmail:
+        document.getElementById("authEmail"),
+
+      authSubmitBtn:
+        document.getElementById("authSubmitBtn"),
+
+      skillForm:
+        document.getElementById("skillForm"),
+
+      submitBtn:
+        document.getElementById("submitBtn"),
+
+      imageInput:
+        document.getElementById("skillImage"),
+
+      modalName:
+        document.getElementById("modalName"),
+
+      whatsappLink:
+        document.getElementById("whatsappLink")
+    };
+
+    /*
+      ==========================================================
+      UTILITIES
+      ==========================================================
+    */
+
+    function normalizeText(value) {
+      return String(value ?? "")
+        .trim()
+        .toLowerCase();
     }
 
-    function isJwtError(err) {
-      if (!err) return false;
+    function cleanPhone(value) {
+      return String(value ?? "")
+        .replace(/\D/g, "");
+    }
 
-      const msg =
-        String(err.message || '')
-          .toLowerCase();
-
-      return (
-        msg.includes('jwt expired') ||
-        msg.includes('invalid jwt') ||
-        msg.includes('expired') ||
-        msg.includes('unauthorized') ||
-        msg.includes('invalid refresh token') ||
-        err.status === 401
+    function isValidPhone(value) {
+      return /^\d{7,15}$/.test(
+        cleanPhone(value)
       );
     }
 
-    supabaseClient.auth.onAuthStateChange(
-      (event, session) => {
+    function getInitial(name) {
+      const value =
+        String(name ?? "")
+          .trim();
 
-        currentUser =
+      return value
+        ? value.charAt(0).toUpperCase()
+        : "?";
+    }
+
+    function getFirstName(name) {
+      const value =
+        String(name ?? "")
+          .trim();
+
+      return value
+        ? value.split(/\s+/)[0]
+        : "Creator";
+    }
+
+    function isJwtError(error) {
+      if (!error) {
+        return false;
+      }
+
+      const message =
+        String(error.message ?? "")
+          .toLowerCase();
+
+      return (
+        error.status === 401 ||
+        message.includes("jwt expired") ||
+        message.includes("invalid jwt") ||
+        message.includes("expired") ||
+        message.includes("unauthorized") ||
+        message.includes("invalid refresh token")
+      );
+    }
+
+    function setButtonLoading(
+      button,
+      isLoading,
+      loadingText,
+      idleText
+    ) {
+      button.disabled = isLoading;
+      button.textContent =
+        isLoading
+          ? loadingText
+          : idleText;
+    }
+
+    function showAlert(message) {
+      /*
+        Replace this later with your own toast component.
+      */
+      window.alert(message);
+    }
+
+    /*
+      ==========================================================
+      MODALS
+      ==========================================================
+    */
+
+    function getModal(id) {
+      return document.getElementById(id);
+    }
+
+    function openModal(id, focusSelector = null) {
+      const modal = getModal(id);
+
+      if (!modal) {
+        return;
+      }
+
+      state.lastFocusedElement =
+        document.activeElement;
+
+      state.activeModalId = id;
+
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+
+      document.body.classList.add("modal-open");
+
+      if (focusSelector) {
+        requestAnimationFrame(() => {
+          document
+            .querySelector(focusSelector)
+            ?.focus();
+        });
+      }
+    }
+
+    function closeModal(id) {
+      const modal = getModal(id);
+
+      if (!modal) {
+        return;
+      }
+
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+
+      if (state.activeModalId === id) {
+        state.activeModalId = null;
+      }
+
+      if (
+        !document.querySelector(
+          ".modal-overlay.active"
+        )
+      ) {
+        document.body.classList.remove("modal-open");
+      }
+
+      state.lastFocusedElement
+        ?.focus?.();
+    }
+
+    function closeAllModals() {
+      document
+        .querySelectorAll(".modal-overlay.active")
+        .forEach(modal => {
+          modal.classList.remove("active");
+          modal.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+        });
+
+      state.activeModalId = null;
+
+      document.body.classList.remove("modal-open");
+
+      state.lastFocusedElement
+        ?.focus?.();
+    }
+
+    /*
+      ==========================================================
+      AUTH
+      ==========================================================
+    */
+
+    function updateAuthUI() {
+      if (state.currentUser) {
+        dom.authNavBtn.textContent =
+          "Sign Out";
+        dom.authNavBtn.classList.remove(
+          "btn-secondary"
+        );
+        dom.authNavBtn.classList.add(
+          "btn-secondary"
+        );
+      } else {
+        dom.authNavBtn.textContent =
+          "Sign In";
+      }
+    }
+
+    async function clearLocalSession() {
+      try {
+        await supabaseClient.auth.signOut({
+          scope: "local"
+        });
+      } catch (error) {
+        console.warn(
+          "Could not clear local session:",
+          error
+        );
+      }
+
+      state.currentUser = null;
+      updateAuthUI();
+    }
+
+    function openAuthModal() {
+      openModal(
+        "authModal",
+        "#authEmail"
+      );
+    }
+
+    async function handleAuthClick() {
+      if (!state.currentUser) {
+        openAuthModal();
+        return;
+      }
+
+      setButtonLoading(
+        dom.authNavBtn,
+        true,
+        "Signing Out...",
+        "Sign Out"
+      );
+
+      try {
+        const { error } =
+          await supabaseClient.auth.signOut({
+            scope: "local"
+          });
+
+        if (error) {
+          console.warn(
+            "Sign out warning:",
+            error
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Sign out error:",
+          error
+        );
+      } finally {
+        state.currentUser = null;
+
+        updateAuthUI();
+
+        setButtonLoading(
+          dom.authNavBtn,
+          false,
+          "Signing Out...",
+          "Sign In"
+        );
+
+        await loadSkills();
+      }
+    }
+
+    async function handleAuthSubmit(event) {
+      event.preventDefault();
+
+      const email =
+        dom.authEmail.value
+          .trim()
+          .toLowerCase();
+
+      if (!email) {
+        showAlert(
+          "Please enter your email address."
+        );
+        dom.authEmail.focus();
+        return;
+      }
+
+      setButtonLoading(
+        dom.authSubmitBtn,
+        true,
+        "Sending link...",
+        "Send Magic Link"
+      );
+
+      try {
+        const { error } =
+          await supabaseClient.auth.signInWithOtp({
+            email,
+            options: {
+              /*
+                Use the current origin instead of a hard-coded
+                Netlify production URL.
+              */
+              emailRedirectTo:
+                window.location.origin,
+
+              shouldCreateUser: true
+            }
+          });
+
+        if (error) {
+          console.error(
+            "Magic link error:",
+            error
+          );
+
+          const message =
+            String(error.message ?? "")
+              .toLowerCase();
+
+          if (
+            error.status === 429 ||
+            message.includes("rate") ||
+            message.includes("too many")
+          ) {
+            showAlert(
+              "Please wait before requesting another login link."
+            );
+          } else {
+            showAlert(
+              "Could not send the login link right now. Please try again."
+            );
+          }
+
+          return;
+        }
+
+        showAlert(
+          `Check your inbox. We sent a login link to ${email}.`
+        );
+
+        dom.authForm.reset();
+        closeModal("authModal");
+      } catch (error) {
+        console.error(
+          "Unexpected authentication error:",
+          error
+        );
+
+        showAlert(
+          "Sign-in is temporarily unavailable. Please try again."
+        );
+      } finally {
+        setButtonLoading(
+          dom.authSubmitBtn,
+          false,
+          "Sending link...",
+          "Send Magic Link"
+        );
+      }
+    }
+
+    /*
+      ==========================================================
+      SKILLS — DATA
+      ==========================================================
+    */
+
+    async function fetchSkills() {
+      let query =
+        supabaseClient
+          .from("skills")
+          .select(
+            [
+              "id",
+              "name",
+              "meta",
+              "category",
+              "title",
+              "description",
+              "price",
+              "phone",
+              "user_id",
+              "created_at",
+              "image_url"
+            ].join(", ")
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          );
+
+      if (
+        state.currentFilter !== "All"
+      ) {
+        query = query.eq(
+          "category",
+          state.currentFilter
+        );
+      }
+
+      const {
+        data,
+        error
+      } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      return Array.isArray(data)
+        ? data
+        : [];
+    }
+
+    function filterSkills(skills) {
+      const query =
+        normalizeText(
+          state.searchQuery
+        );
+
+      if (!query) {
+        return skills;
+      }
+
+      return skills.filter(skill => {
+        const haystack = [
+          skill.name,
+          skill.meta,
+          skill.title,
+          skill.description,
+          skill.category
+        ]
+          .map(normalizeText)
+          .join(" ");
+
+        return haystack.includes(query);
+      });
+    }
+
+    async function loadSkills() {
+      const version =
+        ++state.renderVersion;
+
+      state.isLoadingSkills = true;
+
+      renderLoadingState();
+
+      try {
+        const skills =
+          await fetchSkills();
+
+        /*
+          Ignore an older request if a newer render has
+          already started.
+        */
+        if (
+          version !== state.renderVersion
+        ) {
+          return;
+        }
+
+        state.skills = skills;
+        renderGrid();
+      } catch (error) {
+        console.error(
+          "Error loading skills:",
+          error
+        );
+
+        if (isJwtError(error)) {
+          await clearLocalSession();
+        }
+
+        if (
+          version === state.renderVersion
+        ) {
+          renderErrorState();
+        }
+      } finally {
+        state.isLoadingSkills = false;
+      }
+    }
+
+    /*
+      ==========================================================
+      SKILLS — RENDERING
+      ==========================================================
+    */
+
+    function clearGrid() {
+      dom.grid.replaceChildren();
+    }
+
+    function renderLoadingState() {
+      clearGrid();
+
+      const stateCard =
+        document.createElement("div");
+
+      stateCard.className =
+        "state-card";
+
+      const strong =
+        document.createElement("strong");
+
+      strong.textContent =
+        "Loading live listings...";
+
+      stateCard.appendChild(strong);
+
+      dom.grid.appendChild(
+        stateCard
+      );
+
+      dom.grid.setAttribute(
+        "aria-busy",
+        "true"
+      );
+    }
+
+    function renderErrorState() {
+      clearGrid();
+
+      const stateCard =
+        document.createElement("div");
+
+      stateCard.className =
+        "state-card error";
+
+      const strong =
+        document.createElement("strong");
+
+      strong.textContent =
+        "Could not load listings.";
+
+      const text =
+        document.createElement("span");
+
+      text.textContent =
+        "Please try again.";
+
+      stateCard.append(
+        strong,
+        text
+      );
+
+      dom.grid.appendChild(
+        stateCard
+      );
+
+      dom.grid.setAttribute(
+        "aria-busy",
+        "false"
+      );
+    }
+
+    function renderEmptyState() {
+      clearGrid();
+
+      const stateCard =
+        document.createElement("div");
+
+      stateCard.className =
+        "state-card";
+
+      const strong =
+        document.createElement("strong");
+
+      strong.textContent =
+        state.searchQuery
+          ? "No matching listings."
+          : "No skill listings yet.";
+
+      const text =
+        document.createElement("span");
+
+      text.textContent =
+        state.searchQuery
+          ? "Try a different search."
+          : "Be the first creator to post a skill.";
+
+      stateCard.append(
+        strong,
+        text
+      );
+
+      dom.grid.appendChild(
+        stateCard
+      );
+
+      dom.grid.setAttribute(
+        "aria-busy",
+        "false"
+      );
+    }
+
+    function createElement(
+      tag,
+      className,
+      textContent
+    ) {
+      const element =
+        document.createElement(tag);
+
+      if (className) {
+        element.className =
+          className;
+      }
+
+      if (
+        textContent !== undefined
+      ) {
+        element.textContent =
+          textContent;
+      }
+
+      return element;
+    }
+
+    function createSkillCard(skill) {
+      const card =
+        createElement(
+          "article",
+          "skill-card"
+        );
+
+      const content =
+        createElement(
+          "div",
+          "skill-card-content"
+        );
+
+      const header =
+        createElement(
+          "div",
+          "card-header"
+        );
+
+      const avatar =
+        createElement(
+          "div",
+          "avatar",
+          getInitial(skill.name)
+        );
+
+      const peerInfo =
+        createElement(
+          "div",
+          "peer-info"
+        );
+
+      const peerName =
+        createElement(
+          "div",
+          "peer-name",
+          skill.name || "Creator"
+        );
+
+      const peerMeta =
+        createElement(
+          "div",
+          "peer-meta",
+          skill.meta || ""
+        );
+
+      peerInfo.append(
+        peerName,
+        peerMeta
+      );
+
+      header.append(
+        avatar,
+        peerInfo
+      );
+
+      content.append(
+        header
+      );
+
+      /*
+        IMPORTANT:
+        We assign image.src instead of injecting database
+        data into innerHTML.
+      */
+      if (skill.image_url) {
+        const image =
+          document.createElement("img");
+
+        image.className =
+          "skill-image";
+
+        image.alt =
+          `${skill.title || "Skill"} preview`;
+
+        image.loading =
+          "lazy";
+
+        image.decoding =
+          "async";
+
+        image.src =
+          String(skill.image_url);
+
+        image.addEventListener(
+          "error",
+          () => {
+            image.remove();
+          },
+          { once: true }
+        );
+
+        content.appendChild(image);
+      }
+
+      const title =
+        createElement(
+          "h2",
+          "skill-title",
+          skill.title || "Untitled skill"
+        );
+
+      const description =
+        createElement(
+          "p",
+          "skill-desc",
+          skill.description || ""
+        );
+
+      content.append(
+        title,
+        description
+      );
+
+      const footer =
+        createElement(
+          "div",
+          "card-footer"
+        );
+
+      const price =
+        createElement(
+          "span",
+          "price-tag",
+          skill.price || "Contact for pricing"
+        );
+
+      const actions =
+        createElement(
+          "div",
+          "card-actions"
+        );
+
+      if (
+        state.currentUser &&
+        state.currentUser.id === skill.user_id
+      ) {
+        const deleteButton =
+          createElement(
+            "button",
+            "btn btn-danger",
+            "Delete"
+          );
+
+        deleteButton.type =
+          "button";
+
+        deleteButton.dataset.action =
+          "delete";
+
+        deleteButton.dataset.skillId =
+          String(skill.id);
+
+        actions.appendChild(
+          deleteButton
+        );
+      }
+
+      const contactButton =
+        createElement(
+          "button",
+          "btn btn-primary",
+          `Message ${getFirstName(skill.name)}`
+        );
+
+      contactButton.type =
+        "button";
+
+      contactButton.dataset.action =
+        "contact";
+
+      contactButton.dataset.skillId =
+        String(skill.id);
+
+      contactButton.dataset.creatorName =
+        String(
+          skill.name || "Creator"
+        );
+
+      actions.appendChild(
+        contactButton
+      );
+
+      footer.append(
+        price,
+        actions
+      );
+
+      content.appendChild(footer);
+      card.appendChild(content);
+
+      return card;
+    }
+
+    function renderGrid() {
+      const visibleSkills =
+        filterSkills(
+          state.skills
+        );
+
+      if (
+        !visibleSkills.length
+      ) {
+        renderEmptyState();
+        return;
+      }
+
+      clearGrid();
+
+      const fragment =
+        document.createDocumentFragment();
+
+      for (
+        const skill of visibleSkills
+      ) {
+        fragment.appendChild(
+          createSkillCard(skill)
+        );
+      }
+
+      dom.grid.appendChild(
+        fragment
+      );
+
+      dom.grid.setAttribute(
+        "aria-busy",
+        "false"
+      );
+    }
+
+    /*
+      ==========================================================
+      SEARCH
+      ==========================================================
+    */
+
+    function handleSearch() {
+      state.searchQuery =
+        dom.searchInput.value
+          .slice(0, 100);
+
+      clearTimeout(
+        state.searchTimer
+      );
+
+      state.searchTimer =
+        setTimeout(() => {
+          renderGrid();
+        }, 120);
+    }
+
+    /*
+      ==========================================================
+      CATEGORY
+      ==========================================================
+    */
+
+    function handleCategoryClick(button) {
+      state.currentFilter =
+        button.dataset.category ||
+        "All";
+
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach(filterButton => {
+          filterButton.classList.toggle(
+            "active",
+            filterButton === button
+          );
+        });
+
+      loadSkills();
+    }
+
+    /*
+      ==========================================================
+      POST MODAL
+      ==========================================================
+    */
+
+    function openPostModal() {
+      if (!state.currentUser) {
+        showAlert(
+          "You must be signed in to post a skill."
+        );
+
+        openAuthModal();
+        return;
+      }
+
+      openModal(
+        "postModal",
+        "#fullName"
+      );
+    }
+
+    function clearValidation() {
+      document
+        .querySelectorAll(
+          "#skillForm .has-error"
+        )
+        .forEach(group => {
+          group.classList.remove(
+            "has-error"
+          );
+        });
+    }
+
+    function setFieldError(
+      fieldName,
+      hasError
+    ) {
+      const group =
+        document.querySelector(
+          `[data-field-group="${fieldName}"]`
+        );
+
+      if (!group) {
+        return;
+      }
+
+      group.classList.toggle(
+        "has-error",
+        hasError
+      );
+    }
+
+    function getFormValues() {
+      return {
+        name:
+          document
+            .getElementById("fullName")
+            .value.trim(),
+
+        meta:
+          document
+            .getElementById("collegeMeta")
+            .value.trim(),
+
+        category:
+          document
+            .getElementById("category")
+            .value,
+
+        title:
+          document
+            .getElementById("skillTitle")
+            .value.trim(),
+
+        description:
+          document
+            .getElementById("skillDesc")
+            .value.trim(),
+
+        price:
+          document
+            .getElementById("price")
+            .value.trim(),
+
+        phone:
+          cleanPhone(
+            document
+              .getElementById("phone")
+              .value
+          )
+      };
+    }
+
+    function validateForm(values) {
+      clearValidation();
+
+      let valid = true;
+
+      const rules = {
+        name:
+          values.name.length > 0,
+
+        meta:
+          values.meta.length > 0,
+
+        category:
+          values.category.length > 0,
+
+        title:
+          values.title.length > 0 &&
+          values.title.length <= 60,
+
+        description:
+          values.description.length > 0 &&
+          values.description.length <= 160,
+
+        price:
+          values.price.length > 0,
+
+        phone:
+          isValidPhone(values.phone)
+      };
+
+      for (
+        const [field, isValid] of
+        Object.entries(rules)
+      ) {
+        if (!isValid) {
+          setFieldError(
+            field,
+            true
+          );
+
+          valid = false;
+        }
+      }
+
+      return valid;
+    }
+
+    function validateImage(file) {
+      if (!file) {
+        return true;
+      }
+
+      const valid =
+        ALLOWED_IMAGE_TYPES.has(
+          file.type
+        ) &&
+        file.size <= MAX_IMAGE_SIZE;
+
+      setFieldError(
+        "image",
+        !valid
+      );
+
+      return valid;
+    }
+
+    async function uploadSkillImage(file) {
+      if (!file) {
+        return {
+          url: null,
+          path: null
+        };
+      }
+
+      const extension =
+        file.type === "image/jpeg"
+          ? "jpg"
+          : file.type === "image/png"
+            ? "png"
+            : "webp";
+
+      const randomId =
+        crypto.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random()
+              .toString(36)
+              .slice(2)}`;
+
+      const path =
+        `${state.currentUser.id}/${randomId}.${extension}`;
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .storage
+          .from(IMAGE_BUCKET)
+          .upload(
+            path,
+            file,
+            {
+              cacheControl: "3600",
+              contentType: file.type,
+              upsert: false
+            }
+          );
+
+      if (error) {
+        throw error;
+      }
+
+      const {
+        data
+      } =
+        supabaseClient
+          .storage
+          .from(IMAGE_BUCKET)
+          .getPublicUrl(path);
+
+      return {
+        url:
+          data?.publicUrl || null,
+        path
+      };
+    }
+
+    async function removeUploadedFile(path) {
+      if (!path) {
+        return;
+      }
+
+      try {
+        await supabaseClient
+          .storage
+          .from(IMAGE_BUCKET)
+          .remove([path]);
+      } catch (error) {
+        console.warn(
+          "Could not clean up uploaded image:",
+          error
+        );
+      }
+    }
+
+    async function handleSkillSubmit(event) {
+      event.preventDefault();
+
+      if (!state.currentUser) {
+        closeModal("postModal");
+        openAuthModal();
+        return;
+      }
+
+      const values =
+        getFormValues();
+
+      const imageFile =
+        dom.imageInput.files?.[0] ||
+        null;
+
+      const validForm =
+        validateForm(values);
+
+      const validImage =
+        validateImage(imageFile);
+
+      if (
+        !validForm ||
+        !validImage
+      ) {
+        return;
+      }
+
+      setButtonLoading(
+        dom.submitBtn,
+        true,
+        "Publishing...",
+        "Publish Skill Listing"
+      );
+
+      let uploadedPath =
+        null;
+
+      try {
+        const upload =
+          await uploadSkillImage(
+            imageFile
+          );
+
+        uploadedPath =
+          upload.path;
+
+        const payload = {
+          name:
+            values.name,
+
+          meta:
+            values.meta,
+
+          category:
+            values.category,
+
+          title:
+            values.title,
+
+          description:
+            values.description,
+
+          price:
+            values.price,
+
+          phone:
+            values.phone,
+
+          user_id:
+            state.currentUser.id,
+
+          image_url:
+            upload.url
+        };
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("skills")
+            .insert(payload);
+
+        if (error) {
+          throw error;
+        }
+
+        dom.skillForm.reset();
+        clearValidation();
+
+        closeModal(
+          "postModal"
+        );
+
+        await loadSkills();
+
+      } catch (error) {
+        console.error(
+          "Failed to publish skill:",
+          error
+        );
+
+        if (uploadedPath) {
+          await removeUploadedFile(
+            uploadedPath
+          );
+        }
+
+        if (isJwtError(error)) {
+          await clearLocalSession();
+
+          closeModal(
+            "postModal"
+          );
+
+          openAuthModal();
+
+          showAlert(
+            "Your session expired. Please sign in again."
+          );
+
+          return;
+        }
+
+        showAlert(
+          error?.message
+            ? `Could not publish listing: ${error.message}`
+            : "Could not publish the listing. Please try again."
+        );
+      } finally {
+        setButtonLoading(
+          dom.submitBtn,
+          false,
+          "Publishing...",
+          "Publish Skill Listing"
+        );
+      }
+    }
+
+    /*
+      ==========================================================
+      DELETE
+      ==========================================================
+    */
+
+    async function deleteListing(skillId) {
+      if (!state.currentUser) {
+        openAuthModal();
+        return;
+      }
+
+      if (!skillId) {
+        showAlert(
+          "Invalid listing."
+        );
+        return;
+      }
+
+      const confirmed =
+        window.confirm(
+          "Delete this listing?"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("skills")
+            .delete()
+            .eq("id", skillId)
+            .eq(
+              "user_id",
+              state.currentUser.id
+            );
+
+        if (error) {
+          throw error;
+        }
+
+        await loadSkills();
+      } catch (error) {
+        console.error(
+          "Delete error:",
+          error
+        );
+
+        if (isJwtError(error)) {
+          await clearLocalSession();
+          openAuthModal();
+
+          showAlert(
+            "Your session expired. Please sign in again."
+          );
+
+          return;
+        }
+
+        showAlert(
+          "Could not delete the listing."
+        );
+      }
+    }
+
+    /*
+      ==========================================================
+      CONTACT
+      ==========================================================
+    */
+
+    function resetContactLink() {
+      dom.whatsappLink.removeAttribute(
+        "href"
+      );
+
+      dom.whatsappLink.classList.add(
+        "disabled"
+      );
+
+      dom.whatsappLink.setAttribute(
+        "aria-disabled",
+        "true"
+      );
+
+      dom.whatsappLink.textContent =
+        "Loading contact...";
+    }
+
+    async function openContactModal(
+      skillId,
+      creatorName
+    ) {
+      dom.modalName.textContent =
+        `Connect with ${creatorName || "Creator"}`;
+
+      resetContactLink();
+
+      openModal(
+        "contactModal"
+      );
+
+      try {
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.rpc(
+            "get_skill_phone",
+            {
+              skill_id: skillId
+            }
+          );
+
+        if (error) {
+          throw error;
+        }
+
+        const row =
+          Array.isArray(data)
+            ? data[0]
+            : data;
+
+        const phone =
+          cleanPhone(
+            row?.phone
+          );
+
+        if (!phone) {
+          dom.whatsappLink.textContent =
+            "Phone number unavailable";
+
+          return;
+        }
+
+        dom.whatsappLink.href =
+          `https://wa.me/${phone}`;
+
+        dom.whatsappLink.textContent =
+          "Open in WhatsApp";
+
+        dom.whatsappLink.classList.remove(
+          "disabled"
+        );
+
+        dom.whatsappLink.setAttribute(
+          "aria-disabled",
+          "false"
+        );
+
+      } catch (error) {
+        console.error(
+          "Contact lookup error:",
+          error
+        );
+
+        dom.whatsappLink.textContent =
+          "Contact details unavailable";
+      }
+    }
+
+    /*
+      ==========================================================
+      EVENT HANDLERS
+      ==========================================================
+    */
+
+    dom.authNavBtn.addEventListener(
+      "click",
+      handleAuthClick
+    );
+
+    dom.postSkillBtn.addEventListener(
+      "click",
+      openPostModal
+    );
+
+    dom.searchInput.addEventListener(
+      "input",
+      handleSearch
+    );
+
+    dom.authForm.addEventListener(
+      "submit",
+      handleAuthSubmit
+    );
+
+    dom.skillForm.addEventListener(
+      "submit",
+      handleSkillSubmit
+    );
+
+    document
+      .querySelectorAll(".filter-btn")
+      .forEach(button => {
+        button.addEventListener(
+          "click",
+          () =>
+            handleCategoryClick(button)
+        );
+      });
+
+    /*
+      Modal close buttons.
+    */
+    document
+      .querySelectorAll(
+        "[data-close-modal]"
+      )
+      .forEach(button => {
+        button.addEventListener(
+          "click",
+          () => {
+            closeModal(
+              button.dataset.closeModal
+            );
+          }
+        );
+      });
+
+    /*
+      Clicking directly on the dark backdrop closes the modal.
+    */
+    document
+      .querySelectorAll(".modal-overlay")
+      .forEach(modal => {
+        modal.addEventListener(
+          "mousedown",
+          event => {
+            if (
+              event.target === modal
+            ) {
+              closeModal(
+                modal.id
+              );
+            }
+          }
+        );
+      });
+
+    /*
+      Event delegation for dynamic listing buttons.
+    */
+    dom.grid.addEventListener(
+      "click",
+      event => {
+        const button =
+          event.target.closest(
+            "button[data-action]"
+          );
+
+        if (!button) {
+          return;
+        }
+
+        const action =
+          button.dataset.action;
+
+        const skillId =
+          button.dataset.skillId;
+
+        if (
+          action === "delete"
+        ) {
+          deleteListing(skillId);
+        }
+
+        if (
+          action === "contact"
+        ) {
+          openContactModal(
+            skillId,
+            button.dataset.creatorName
+          );
+        }
+      }
+    );
+
+    /*
+      Escape closes the currently active modal.
+    */
+    document.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key !== "Escape"
+        ) {
+          return;
+        }
+
+        if (state.activeModalId) {
+          closeModal(
+            state.activeModalId
+          );
+        }
+      }
+    );
+
+    /*
+      ==========================================================
+      SUPABASE AUTH STATE
+      ==========================================================
+    */
+
+    supabaseClient.auth.onAuthStateChange(
+      (_event, session) => {
+        state.currentUser =
           session?.user || null;
 
         updateAuthUI();
 
         /*
-          Delay rendering slightly so Supabase can finish
-          processing the magic-link callback.
+          Avoid doing heavy Supabase work directly inside
+          the auth callback.
         */
-        setTimeout(() => {
-          renderGrid();
-        }, 0);
+        queueMicrotask(() => {
+          loadSkills();
+        });
       }
     );
 
+    /*
+      ==========================================================
+      INITIALIZATION
+      ==========================================================
+    */
+
     async function initializeApp() {
+      if (!window.supabase) {
+        renderErrorState();
+
+        console.error(
+          "Supabase library failed to load."
+        );
+
+        return;
+      }
+
       try {
         const {
           data,
@@ -1017,1477 +3030,31 @@
 
         if (error) {
           console.warn(
-            'Could not load session:',
-            error.message
+            "Could not restore session:",
+            error
           );
 
-          currentUser = null;
-
-          try {
-            await supabaseClient.auth.signOut({
-              scope: 'local'
-            });
-          } catch (_) {}
+          await clearLocalSession();
         } else {
-          currentUser =
+          state.currentUser =
             data?.session?.user || null;
         }
       } catch (error) {
-        console.warn(
-          'Session initialization error:',
+        console.error(
+          "Session initialization failed:",
           error
         );
 
-        currentUser = null;
+        state.currentUser = null;
       }
 
       updateAuthUI();
-      renderGrid();
+
+      await loadSkills();
     }
-
-    /* =====================================================
-       AUTH UI
-       ===================================================== */
-
-    function updateAuthUI() {
-
-      const authBtn =
-        document.getElementById(
-          'authNavBtn'
-        );
-
-      if (!authBtn) return;
-
-      if (currentUser) {
-
-        authBtn.innerText =
-          'Sign Out';
-
-        authBtn.onclick =
-          async () => {
-
-            authBtn.disabled = true;
-            authBtn.innerText =
-              'Signing Out...';
-
-            try {
-
-              const {
-                error
-              } =
-                await supabaseClient.auth
-                  .signOut({
-                    scope: 'local'
-                  });
-
-              if (error) {
-                console.warn(
-                  'Sign out warning:',
-                  error
-                );
-              }
-
-            } catch (error) {
-              console.warn(
-                'Sign out error:',
-                error
-              );
-            }
-
-            currentUser = null;
-
-            authBtn.disabled =
-              false;
-
-            updateAuthUI();
-
-            renderGrid();
-          };
-
-      } else {
-
-        authBtn.disabled =
-          false;
-
-        authBtn.innerText =
-          'Sign In';
-
-        authBtn.onclick =
-          openAuthModal;
-      }
-    }
-
-    /* =====================================================
-       AUTH MODAL
-       ===================================================== */
-
-    function openAuthModal() {
-
-      document
-        .getElementById('authModal')
-        .classList.add('active');
-
-      setTimeout(() => {
-        document
-          .getElementById('authEmail')
-          ?.focus();
-      }, 100);
-    }
-
-    function closeAuthModal() {
-
-      document
-        .getElementById('authModal')
-        .classList.remove('active');
-
-      document
-        .getElementById('authForm')
-        .reset();
-    }
-
-    /* =====================================================
-       MAGIC LINK
-       ===================================================== */
-
-    async function handleAuthSubmit(e) {
-
-      e.preventDefault();
-
-      const emailInput =
-        document.getElementById(
-          'authEmail'
-        );
-
-      const btn =
-        document.getElementById(
-          'authSubmitBtn'
-        );
-
-      const email =
-        emailInput.value.trim();
-
-      if (!email) {
-        alert(
-          'Please enter your email address.'
-        );
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText =
-        'Sending link...';
-
-      try {
-
-        const {
-          error
-        } =
-          await supabaseClient.auth
-            .signInWithOtp({
-
-              email,
-
-              options: {
-                emailRedirectTo:
-                  APP_URL,
-
-                shouldCreateUser:
-                  true
-              }
-            });
-
-        if (error) {
-
-          console.error(
-            'Magic link error:',
-            error
-          );
-
-          const message =
-            String(
-              error.message || ''
-            ).toLowerCase();
-
-          if (
-            error.status === 429 ||
-            message.includes('rate') ||
-            message.includes('too many') ||
-            message.includes('60 seconds')
-          ) {
-
-            alert(
-              'Please wait about 60 seconds before requesting another login link.'
-            );
-
-          } else if (
-            message.includes('redirect') ||
-            message.includes('url')
-          ) {
-
-            alert(
-              'The login redirect is not configured correctly. Please try again shortly.'
-            );
-
-          } else {
-
-            alert(
-              'Could not send the login link right now. Please try again shortly.'
-            );
-          }
-
-          return;
-        }
-
-        alert(
-          'Check your inbox! We sent a login link to ' +
-          email
-        );
-
-        closeAuthModal();
-
-      } catch (error) {
-
-        console.error(
-          'Unexpected authentication error:',
-          error
-        );
-
-        alert(
-          'Sign-in is temporarily unavailable. Please try again shortly.'
-        );
-
-      } finally {
-
-        btn.disabled = false;
-
-        btn.innerText =
-          'Send Magic Link';
-      }
-    }
-
-    /* =====================================================
-       SEARCH
-       ===================================================== */
-
-    function handleSearch() {
-
-      searchQuery =
-        document
-          .getElementById(
-            'searchInput'
-          )
-          .value
-          .trim()
-          .slice(0, 100);
-
-      renderGrid();
-    }
-
-    /*
-      Escape characters that can interfere with the
-      PostgREST .or() filter string.
-    */
-    function escapeSearchValue(value) {
-
-      return String(value || '')
-        .replace(/\\/g, '\\\\')
-        .replace(/,/g, '\\,')
-        .replace(/\./g, '\\.')
-        .replace(/\(/g, '\\(')
-        .replace(/\)/g, '\\)');
-    }
-
-    /* =====================================================
-       FETCH SKILLS
-       ===================================================== */
-
-    async function fetchSkills() {
-
-      try {
-
-        let query =
-          supabaseClient
-            .from('skills')
-            .select(
-              'id, name, meta, category, title, description, price, user_id, created_at, image_url'
-            )
-            .order(
-              'created_at',
-              {
-                ascending: false
-              }
-            );
-
-        if (
-          currentFilter !==
-          'All'
-        ) {
-
-          query =
-            query.eq(
-              'category',
-              currentFilter
-            );
-        }
-
-        if (
-          searchQuery.length > 0
-        ) {
-
-          const safeSearch =
-            escapeSearchValue(
-              searchQuery
-            );
-
-          query =
-            query.or(
-              `title.ilike.%${safeSearch}%,description.ilike.%${safeSearch}%,meta.ilike.%${safeSearch}%,name.ilike.%${safeSearch}%`
-            );
-        }
-
-        const {
-          data,
-          error
-        } =
-          await query;
-
-        if (error) {
-
-          console.error(
-            'Error loading skills:',
-            error
-          );
-
-          if (
-            isJwtError(error)
-          ) {
-
-            await purgeStaleSession();
-
-            try {
-
-              const {
-                data: retryData,
-                error: retryError
-              } =
-                await supabaseClient
-                  .from('skills')
-                  .select(
-                    'id, name, meta, category, title, description, price, user_id, created_at, image_url'
-                  )
-                  .order(
-                    'created_at',
-                    {
-                      ascending: false
-                    }
-                  );
-
-              if (!retryError) {
-                return retryData || [];
-              }
-
-            } catch (_) {}
-          }
-
-          return [];
-        }
-
-        return Array.isArray(data)
-          ? data
-          : [];
-
-      } catch (error) {
-
-        console.error(
-          'Unexpected skills fetch error:',
-          error
-        );
-
-        return [];
-      }
-    }
-
-    /* =====================================================
-       RENDER GRID
-       ===================================================== */
-
-    async function renderGrid() {
-
-      const grid =
-        document.getElementById(
-          'cardGrid'
-        );
-
-      if (!grid) return;
-
-      grid.innerHTML =
-        '<div class="empty-state">Loading live listings...</div>';
-
-      const skills =
-        await fetchSkills();
-
-      grid.innerHTML = '';
-
-      if (
-        !skills ||
-        skills.length === 0
-      ) {
-
-        grid.innerHTML =
-          '<div class="empty-state">No skill listings match your query.</div>';
-
-        return;
-      }
-
-      skills.forEach(skill => {
-
-        const initial =
-          skill.name
-            ? String(
-                skill.name
-              )
-                .charAt(0)
-                .toUpperCase()
-            : '?';
-
-        const isOwner =
-          currentUser &&
-          currentUser.id ===
-            skill.user_id;
-
-        const card =
-          document.createElement(
-            'article'
-          );
-
-        card.className =
-          'skill-card';
-
-        const safeName =
-          escapeHTML(
-            skill.name ||
-            'Creator'
-          );
-
-        const safeMeta =
-          escapeHTML(
-            skill.meta ||
-            ''
-          );
-
-        const safeTitle =
-          escapeHTML(
-            skill.title ||
-            ''
-          );
-
-        const safeDescription =
-          escapeHTML(
-            skill.description ||
-            ''
-          );
-
-        const safePrice =
-          escapeHTML(
-            skill.price ||
-            ''
-          );
-
-        const safeImageURL =
-          escapeHTML(
-            skill.image_url ||
-            ''
-          );
-
-        const safeSkillId =
-          escapeHTML(
-            skill.id
-          );
-
-        const firstName =
-          escapeHTML(
-            String(
-              skill.name ||
-              ''
-            )
-              .trim()
-              .split(/\s+/)[0] ||
-              'Creator'
-          );
-
-        const imageHTML =
-          safeImageURL
-            ? `
-              <img
-                src="${safeImageURL}"
-                alt="Skill preview"
-                loading="lazy"
-                style="
-                  width:100%;
-                  height:180px;
-                  object-fit:cover;
-                  border-radius:var(--radius-sm);
-                  margin-bottom:12px;
-                "
-                onerror="this.remove()"
-              >
-            `
-            : '';
-
-        const deleteHTML =
-          isOwner
-            ? `
-              <button
-                type="button"
-                class="btn-secondary"
-                style="
-                  margin-right:8px;
-                  color:var(--color-error);
-                  border-color:var(--color-error);
-                "
-                onclick="deleteListing('${safeSkillId}')"
-              >
-                Delete
-              </button>
-            `
-            : '';
-
-        card.innerHTML = `
-          <div>
-
-            <div class="card-header">
-
-              <div class="avatar">
-                ${escapeHTML(initial)}
-              </div>
-
-              <div class="peer-info">
-
-                <div class="name">
-                  ${safeName}
-                </div>
-
-                <div class="meta">
-                  ${safeMeta}
-                </div>
-
-              </div>
-
-            </div>
-
-            ${imageHTML}
-
-            <h2 class="skill-title">
-              ${safeTitle}
-            </h2>
-
-            <p class="skill-desc">
-              ${safeDescription}
-            </p>
-
-          </div>
-
-          <div class="card-footer">
-
-            <span class="price-tag">
-              ${safePrice}
-            </span>
-
-            <div>
-
-              ${deleteHTML}
-
-              <button
-                type="button"
-                class="btn-primary"
-                onclick="openContactModal('${safeSkillId}', '${escapeHTML(skill.name || 'Creator')}')"
-              >
-                Message ${firstName}
-              </button>
-
-            </div>
-
-          </div>
-        `;
-
-        grid.appendChild(card);
-      });
-    }
-
-    /* =====================================================
-       DELETE
-       ===================================================== */
-
-    async function deleteListing(
-      skillId
-    ) {
-
-      if (!currentUser) {
-
-        alert(
-          'You must be signed in to manage your listing.'
-        );
-
-        openAuthModal();
-
-        return;
-      }
-
-      if (
-        !skillId
-      ) {
-
-        alert(
-          'Invalid listing.'
-        );
-
-        return;
-      }
-
-      if (
-        !confirm(
-          'Are you sure you want to delete this listing?'
-        )
-      ) {
-        return;
-      }
-
-      try {
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from('skills')
-            .delete()
-            .eq(
-              'id',
-              skillId
-            );
-
-        if (error) {
-
-          console.error(
-            'Delete error:',
-            error
-          );
-
-          if (
-            isJwtError(error)
-          ) {
-
-            alert(
-              'Session expired. Please sign in again.'
-            );
-
-            await purgeStaleSession();
-
-            openAuthModal();
-
-            return;
-          }
-
-          alert(
-            'Failed to delete listing: ' +
-            error.message
-          );
-
-          return;
-        }
-
-        await renderGrid();
-
-      } catch (error) {
-
-        console.error(
-          'Unexpected delete error:',
-          error
-        );
-
-        alert(
-          'Failed to delete the listing. Please try again.'
-        );
-      }
-    }
-
-    /* =====================================================
-       POST MODAL
-       ===================================================== */
-
-    function openPostModal() {
-
-      if (!currentUser) {
-
-        alert(
-          'You must be signed in to post a skill listing.'
-        );
-
-        openAuthModal();
-
-        return;
-      }
-
-      document
-        .getElementById(
-          'postModal'
-        )
-        .classList.add(
-          'active'
-        );
-    }
-
-    /* =====================================================
-       SKILL SUBMIT
-       ===================================================== */
-
-    async function handleSkillSubmit(e) {
-
-      e.preventDefault();
-
-      if (!currentUser) {
-
-        alert(
-          'Session expired. Please sign in again.'
-        );
-
-        openAuthModal();
-
-        return;
-      }
-
-      const fields = {
-
-        name: {
-          id: 'fullName',
-          group: 'group-name',
-          validate:
-            val =>
-              val
-                .trim()
-                .length > 0
-        },
-
-        meta: {
-          id: 'collegeMeta',
-          group: 'group-meta',
-          validate:
-            val =>
-              val
-                .trim()
-                .length > 0
-        },
-
-        category: {
-          id: 'category',
-          group: 'group-category',
-          validate:
-            val =>
-              val !== ''
-        },
-
-        title: {
-          id: 'skillTitle',
-          group: 'group-title',
-          validate:
-            val =>
-              val
-                .trim()
-                .length > 0 &&
-              val.length <= 60
-        },
-
-        description: {
-          id: 'skillDesc',
-          group: 'group-desc',
-          validate:
-            val =>
-              val
-                .trim()
-                .length > 0 &&
-              val.length <= 160
-        },
-
-        price: {
-          id: 'price',
-          group: 'group-price',
-          validate:
-            val =>
-              val
-                .trim()
-                .length > 0
-        },
-
-        phone: {
-          id: 'phone',
-          group: 'group-phone',
-          validate:
-            val => {
-
-              const digits =
-                val.replace(
-                  /\D/g,
-                  ''
-                );
-
-              return (
-                /^\d{7,15}$/.test(
-                  digits
-                )
-              );
-            }
-        }
-      };
-
-      let isValid =
-        true;
-
-      const formData = {};
-
-      Object.keys(fields)
-        .forEach(key => {
-
-          const field =
-            fields[key];
-
-          const input =
-            document.getElementById(
-              field.id
-            );
-
-          const group =
-            document.getElementById(
-              field.group
-            );
-
-          if (
-            !input ||
-            !group
-          ) {
-            isValid = false;
-            return;
-          }
-
-          const val =
-            input.value;
-
-          if (
-            !field.validate(val)
-          ) {
-
-            group.classList.add(
-              'has-error'
-            );
-
-            isValid = false;
-
-          } else {
-
-            group.classList.remove(
-              'has-error'
-            );
-
-            formData[key] =
-              val.trim();
-          }
-        });
-
-      const imageInput =
-        document.getElementById(
-          'skillImage'
-        );
-
-      const imageFile =
-        imageInput?.files?.[0];
-
-      let publicImageUrl =
-        null;
-
-      let uploadedFilePath =
-        null;
-
-      if (imageFile) {
-
-        const validTypes = [
-          'image/png',
-          'image/jpeg',
-          'image/webp'
-        ];
-
-        if (
-          !validTypes.includes(
-            imageFile.type
-          )
-        ) {
-
-          document
-            .getElementById(
-              'group-image'
-            )
-            .classList.add(
-              'has-error'
-            );
-
-          alert(
-            'Image must be JPEG, PNG, or WEBP.'
-          );
-
-          return;
-        }
-
-        if (
-          imageFile.size >
-          3 * 1024 * 1024
-        ) {
-
-          document
-            .getElementById(
-              'group-image'
-            )
-            .classList.add(
-              'has-error'
-            );
-
-          alert(
-            'Image must be under 3MB.'
-          );
-
-          return;
-        }
-
-        document
-          .getElementById(
-            'group-image'
-          )
-          .classList.remove(
-            'has-error'
-          );
-      }
-
-      if (!isValid) {
-        return;
-      }
-
-      const submitBtn =
-        document.getElementById(
-          'submitBtn'
-        );
-
-      submitBtn.disabled =
-        true;
-
-      submitBtn.innerText =
-        'Publishing...';
-
-      try {
-
-        /*
-          IMAGE UPLOAD
-        */
-
-        if (imageFile) {
-
-          let fileExt = 'webp';
-
-          if (
-            imageFile.type ===
-            'image/jpeg'
-          ) {
-            fileExt = 'jpg';
-          }
-
-          if (
-            imageFile.type ===
-            'image/png'
-          ) {
-            fileExt = 'png';
-          }
-
-          uploadedFilePath =
-            `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
-
-          const {
-            error: uploadError
-          } =
-            await supabaseClient
-              .storage
-              .from(
-                'skill-images'
-              )
-              .upload(
-                uploadedFilePath,
-                imageFile,
-                {
-                  cacheControl:
-                    '3600',
-                  contentType:
-                    imageFile.type,
-                  upsert:
-                    false
-                }
-              );
-
-          if (uploadError) {
-
-            console.error(
-              'Upload error:',
-              uploadError
-            );
-
-            if (
-              isJwtError(
-                uploadError
-              )
-            ) {
-
-              alert(
-                'Your session has expired. Please sign in again.'
-              );
-
-              await purgeStaleSession();
-
-              closePostModal();
-
-              openAuthModal();
-
-              return;
-            }
-
-            alert(
-              'Failed to upload image: ' +
-              uploadError.message
-            );
-
-            return;
-          }
-
-          const {
-            data: urlData
-          } =
-            supabaseClient
-              .storage
-              .from(
-                'skill-images'
-              )
-              .getPublicUrl(
-                uploadedFilePath
-              );
-
-          publicImageUrl =
-            urlData?.publicUrl ||
-            null;
-        }
-
-        /*
-          DATABASE INSERT
-        */
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from('skills')
-            .insert([
-              {
-                name:
-                  formData.name,
-
-                meta:
-                  formData.meta,
-
-                category:
-                  formData.category,
-
-                title:
-                  formData.title,
-
-                description:
-                  formData.description,
-
-                price:
-                  formData.price,
-
-                phone:
-                  formData.phone.replace(
-                    /\D/g,
-                    ''
-                  ),
-
-                user_id:
-                  currentUser.id,
-
-                image_url:
-                  publicImageUrl
-              }
-            ]);
-
-        if (error) {
-
-          console.error(
-            'Listing insert error:',
-            error
-          );
-
-          /*
-            Remove uploaded image if DB insert failed,
-            preventing orphaned files.
-          */
-
-          if (
-            uploadedFilePath
-          ) {
-
-            try {
-
-              await supabaseClient
-                .storage
-                .from(
-                  'skill-images'
-                )
-                .remove([
-                  uploadedFilePath
-                ]);
-
-            } catch (
-              cleanupError
-            ) {
-
-              console.warn(
-                'Image cleanup failed:',
-                cleanupError
-              );
-            }
-          }
-
-          if (
-            isJwtError(
-              error
-            )
-          ) {
-
-            alert(
-              'Your session has expired. Please sign in again.'
-            );
-
-            await purgeStaleSession();
-
-            closePostModal();
-
-            openAuthModal();
-
-            return;
-          }
-
-          alert(
-            'Failed to submit listing: ' +
-            error.message
-          );
-
-          return;
-        }
-
-        await renderGrid();
-
-        closePostModal();
-
-      } catch (error) {
-
-        console.error(
-          'Unexpected submit error:',
-          error
-        );
-
-        /*
-          Cleanup any image uploaded before an unexpected error.
-        */
-
-        if (
-          uploadedFilePath
-        ) {
-
-          try {
-
-            await supabaseClient
-              .storage
-              .from(
-                'skill-images'
-              )
-              .remove([
-                uploadedFilePath
-              ]);
-
-          } catch (
-            cleanupError
-          ) {
-
-            console.warn(
-              'Cleanup error:',
-              cleanupError
-            );
-          }
-        }
-
-        alert(
-          'Something went wrong while publishing. Please try again.'
-        );
-
-      } finally {
-
-        submitBtn.disabled =
-          false;
-
-        submitBtn.innerText =
-          'Publish Skill Listing';
-      }
-    }
-
-    /* =====================================================
-       CATEGORY
-       ===================================================== */
-
-    function filterCategory(
-      cat,
-      btn
-    ) {
-
-      currentFilter =
-        cat;
-
-      document
-        .querySelectorAll(
-          '.filter-btn'
-        )
-        .forEach(
-          b =>
-            b.classList.remove(
-              'active'
-            )
-        );
-
-      btn.classList.add(
-        'active'
-      );
-
-      renderGrid();
-    }
-
-    /* =====================================================
-       MODAL CLOSE
-       ===================================================== */
-
-    function closePostModal() {
-
-      document
-        .getElementById(
-          'postModal'
-        )
-        .classList.remove(
-          'active'
-        );
-
-      document
-        .getElementById(
-          'skillForm'
-        )
-        .reset();
-
-      document
-        .querySelectorAll(
-          '#skillForm .has-error'
-        )
-        .forEach(
-          group =>
-            group.classList.remove(
-              'has-error'
-            )
-        );
-    }
-
-    /* =====================================================
-       CONTACT MODAL
-       ===================================================== */
-
-    async function openContactModal(
-      skillId,
-      name
-    ) {
-
-      const modalName =
-        document.getElementById(
-          'modalName'
-        );
-
-      const whatsappLink =
-        document.getElementById(
-          'whatsappLink'
-        );
-
-      modalName.innerText =
-        'Connect with ' +
-        (name || 'Creator');
-
-      whatsappLink.innerText =
-        'Securing phone number...';
-
-      whatsappLink.removeAttribute(
-        'href'
-      );
-
-      whatsappLink.style.pointerEvents =
-        'none';
-
-      document
-        .getElementById(
-          'contactModal'
-        )
-        .classList.add(
-          'active'
-        );
-
-      try {
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.rpc(
-            'get_skill_phone',
-            {
-              skill_id:
-                skillId
-            }
-          );
-
-        if (
-          error
-        ) {
-
-          console.error(
-            'Phone RPC error:',
-            error
-          );
-
-          if (
-            isJwtError(error)
-          ) {
-            await purgeStaleSession();
-          }
-
-          whatsappLink.innerText =
-            'Error fetching contact details';
-
-          return;
-        }
-
-        let row =
-          null;
-
-        if (
-          Array.isArray(
-            data
-          )
-        ) {
-          row =
-            data[0] || null;
-        } else {
-          row = data;
-        }
-
-        if (
-          !row ||
-          !row.phone
-        ) {
-
-          whatsappLink.innerText =
-            'Phone number unavailable';
-
-          return;
-        }
-
-        const cleanPhone =
-          String(
-            row.phone
-          ).replace(
-            /\D/g,
-            ''
-          );
-
-        if (
-          !cleanPhone
-        ) {
-
-          whatsappLink.innerText =
-            'Phone number unavailable';
-
-          return;
-        }
-
-        whatsappLink.href =
-          `https://wa.me/${cleanPhone}`;
-
-        whatsappLink.innerText =
-          'Open in WhatsApp';
-
-        whatsappLink.style.pointerEvents =
-          'auto';
-
-      } catch (error) {
-
-        console.error(
-          'Unexpected contact error:',
-          error
-        );
-
-        whatsappLink.innerText =
-          'Contact details unavailable';
-      }
-    }
-
-    function closeContactModal() {
-
-      document
-        .getElementById(
-          'contactModal'
-        )
-        .classList.remove(
-          'active'
-        );
-    }
-
-    /* =====================================================
-       ESCAPE KEY
-       ===================================================== */
-
-    document.addEventListener(
-      'keydown',
-      event => {
-
-        if (
-          event.key !==
-          'Escape'
-        ) {
-          return;
-        }
-
-        document
-          .querySelectorAll(
-            '.modal-overlay'
-          )
-          .forEach(
-            modal =>
-              modal.classList.remove(
-                'active'
-              )
-          );
-      }
-    );
-
-    /* =====================================================
-       INITIAL LOAD
-       ===================================================== */
 
     initializeApp();
   </script>
 
 </body>
 </html>
-```
